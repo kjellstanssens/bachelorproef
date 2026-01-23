@@ -1,0 +1,113 @@
+%---------- Inleiding ---------------------------------------------------------
+\section{Inleiding}%
+\label{sec:inleiding}
+
+Vlaanderen heeft een groot aanbod aan live muziek, verspreid over tientallen concertzalen zoals de AB, Trix, Vooruit, Botanique en vele anderen. Voor muziekliefhebbers is het een uitdaging om op de hoogte te blijven van alle evenementen. Dit komt door de versnippering van de informatie, ookal is de informatie online beschikbaar, is deze heel verspreid over individuele venue-websites waardoor het effectief gebruik door de eindgebruiker zeer lastig wordt. Gebruikers moeten handmatig 5 tot 10 websites controleren of vertrouwen op algoritmes van sociale media. Het gevolg is dat ze de concerten vaak te laat ontdekken, hierdoor missen ze de kans op deelname. Onderzoek toont aan dat er een zekere nood is aan betere digitale ontsluiting van culturele informatie voor Vlaamse burgers\autocite{Rutten2018}.
+
+Er bestaan internationale platforms zoals Bandsintown en Songkick, maar deze hebben gebreken voor de specifieke Vlaamse context. Ze richten zich voornamelijk op internationale artiesten en hebben niet voldoende dekking over lokale zalen. Bij meerdere van deze platformen ontbreekt de mogelijkheid om specifiek venues te volgen in plaats van enkel artiesten.
+
+\subsection{Probleemstelling}
+Het kernprobleem is de informatieversnippering van concertgegevens in Vlaanderen. Concertinformatie staat verspreid over verschillende platformen met elk eigen HTML-formaten die niet eenvoudig door machines leesbaar zijn. Hierdoor moeten eindgebruikers onnodig veel tijd investeren in de manuele opvolging van hun interesses of vertrouwen op internationale tools die de lokale markt slechts ten dele dekken. Er ontbreekt een gepersonaliseerd platform dat specifiek is afgestemd op de Vlaamse concertmarkt en gebruikers proactief per e-mail verwittigt. Met een generieke aanpak wordt bedoeld dat de ontwikkelde scraping-logica breed inzetbaar is voor verschillende HTML-structuren, zodat notificaties vanuit één centraal punt komen in plaats van versnipperde apps.
+
+\subsection{Onderzoeksvraag}
+Dit onderzoek streeft naar een oplossing voor de volgende hoofdonderzoeksvraag:
+
+\begin{quote}
+\textit{Hoe kan een gepersonaliseerd e-mailnotificatiesysteem ontworpen worden dat Vlaamse concertgangers binnen 24 uur verwittigt van nieuwe concerten bij lokale venues, op basis van artiest- en locatievoorkeuren?}
+\end{quote}
+
+Deze vraag wordt verder opgesplitst in deelvragen binnen het probleemdomein en het oplossingsdomein:
+
+\textbf{Probleemdomein}
+\begin{itemize}
+    \item Welke metadata (startuur, voorprogramma, ticketprijs) worden in de literatuur en datastandaarden beschreven als essentieel voor concertnotificaties?
+    \item Wat zijn de functionele en content-gerelateerde tekortkomingen van Bandsintown en Songkick voor de Vlaamse markt?
+    \item Met welke frequentie updaten Vlaamse concertvenues gemiddeld hun kalenders en welk gevolg heeft dit voor de scrape-planning?
+    \item Welke best practices bestaan er rond notificatie-frequentie om \textit{notificatie disruptie} te vermijden?
+\end{itemize}
+
+\textbf{Oplossingsdomein}
+\begin{itemize}
+    \item Welke web scraping frameworks zijn het meest geschikt voor robuuste, periodieke monitoring van verschillende venue-websites?
+    \item Hoe kunnen veranderingsdetectie technieken geïmplementeerd worden om de nieuwe concerten van eerdere concerten te onderscheiden zonder valse positieven?
+    \item Welke data-architectuur is vereist om gebruikersvoorkeuren efficiënt te matchen aan binnenkomende concertdata?
+    \item Hoe kan het systeem schaalbaar opgezet worden zodat het eenvoudig uitbreidbaar is naar meerdere venues?
+    \item In welke mate voldoet het ontwikkelde prototype aan de vooraf gestelde technische criteria voor matching-nauwkeurigheid (>90\%), notificatiesnelheid (<4u) en schaalbaarheid?
+\end{itemize}
+
+\subsection{Doelgroep}
+De primaire doelgroep van dit onderzoek zijn Vlaamse concertgangers (leeftijd 18-65) die momenteel ontevreden zijn over het handmatig controleren van websites. Een secundaire doelgroep zijn ontwikkelaars met interesse in change detection systemen.
+
+%---------- Stand van zaken ---------------------------------------------------
+
+\section{Literatuurstudie}%
+\label{sec:literatuurstudie}
+
+Web scraping is van groot belang voor het verzamelen van informatie van het web. Volgens Tseriotis (2025) evolueert web scraping snel, waarbij moderne frameworks steeds beter om kunnen gaan met variërende informatie\autocite{Tseriotis2025}. Vording (2020) vergelijkt verschillende scraping technologieën en benadrukt het belang van robuustheid bij het verwerken van verschillende HTML-structuren\autocite{Vording2020}. Deze inzichten zijn zeer belangrijk voor het beantwoorden van de deelvragen rondom frameworks in het oplossingsdomein.
+
+Voor het voortdurend monitoren van websites is \textit{veranderingsdetectie} cruciaal. Een enquête van arXiv contributors (2019) bespreekt verschillende methoden voor het opsporen van wijzigingen op webpagina's, variërend van HTML diffing tot DOM-tree analyses\autocite{ChangeSurvey2019}. Huang (2021) gaat verder in op het beheer van voortdurende scraping processen, wat relevant is voor de betrouwbaarheid van het voorgestelde systeem\autocite{Huang2021}.
+
+Het verzenden van de gepaste notificaties vereist inzicht in gebruikersvoorkeuren om overbelasting te voorkomen. Mehrotra et al. (2017) bieden een overzicht van notificatiesystemen en bespreken het belang van context en timing\autocite{NotificationSurvey2017}. Dit adresseert direct de deelvraag rondom \textit{notificatie disruptie} in het probleemdomein. Daarnaast is het correct interpreteren van muziekvoorkeuren en concertinformatie essentieel. Graves (2003) onderzocht reeds vroeg hoe deze informatie effectief digitaal beschreven kan worden\autocite{Graves2003}, en Zangerle et al. (2018) tonen aan hoe modellen gebaseerd op online informatie concertbezoeken kunnen voorspellen\autocite{Zangerle2018}.
+
+Dit onderzoek baseert zich verder op deze literatuur door deze technieken toe te passen op de specifieke casus van de Vlaamse concertmarkt.
+
+%---------- Methodologie ------------------------------------------------------
+\section{Methodologie}%
+\label{sec:methodologie}
+
+Het onderzoek wordt uitgevoerd in zeven fasen, resulterend in een werkend prototype (Proof-of-Concept). Elke fase draagt bij aan het beantwoorden van specifieke deelvragen.
+
+\subsection{Fase 1: Literatuurstudie (Week 1-3)}
+Verdieping in web scraping technieken, veranderingsdetectie methoden, en notificatiebepalingen. Dit beantwoordt de theoretische vragen in het oplossingsdomein over frameworks en architecturen. Dit resulteert in een literatuurrapport dat de theoretische basis vormt.
+
+\subsection{Fase 2: Probleemanalyse \& Venue Selectie (Week 4)}
+Om de vragen uit het probleemdomein te beantwoorden, wordt een vergelijkende analyse uitgevoerd van bestaande diensten (Bandsintown, Songkick) om functionele tekortkomingen in kaart te brengen. Daarnaast wordt een literatuurstudie uitgevoerd (o.a. Graves, 2003) om de essentiële metadata voor concerten vast te leggen. Tevens worden 2-4 representatieve venues (bv. AB, Trix) geselecteerd voor de technische PoC.
+
+\subsection{Fase 3: Implementatie webscraper (Week 5-6)}
+Ontwikkeling van Python-scrapers (gebruikmakend van het meest geschikte framework uit fase 1) voor de geselecteerde venues en het implementeren van de veranderingsdetectie. Tijdens deze fase wordt gedurende twee weken de update-frequentie van de venue-kalenders gemonitord. Dit beantwoordt de deelvraag uit het probleemdomein over de update-frequentie en optimaliseert de scrape-planning. Tevens wordt een databankarchitectuur opgezet die is voorbereid op schaalbaarheid naar meerdere venues (oplossingsdomein).
+
+\subsection{Fase 4: Vergelijkings- \& Notificatie Systeem (Week 7-8)}
+Ontwikkeling van een schaalbaar vergelijkingsalgoritme dat gebruikersvoorkeuren efficiënt matcht aan binnenkomende concertdata (oplossingsdomein). Daarnaast implementatie van de notificatieservice conform de best practices uit de literatuurstudie (Fase 1 \& 2). Hiermee worden de vragen rondom data-architectuur en notificatie-design gevalideerd.
+
+\subsection{Fase 5: Evaluatie (Week 9-10)}
+Evaluatie vindt plaats op basis van statistieken zoals precisie van de scraping en delivery rate van notificaties. Deze fase bevat de handmatige verificatie van 20 gescrapte concerten om de "matching-nauwkeurigheid" van >90\% te valideren, het loggen van het tijdstip tussen de publicatie op de venue-website en het verzenden van de e-mail om de grens van 4 uur te bewaken. Ook een "stress-test" waarbij een nieuwe venue wordt toegevoegd via een configuratiebestand om de schaalbaarheid te bewijzen zonder code-wijzigingen.
+
+\subsection{Fase 6: Vergelijkende Analyse (Week 10-12)}
+Het vergelijken van de PoC met bestaande platformen zoals Bandsintown op vlak van dekking en personalisatie voor de Vlaamse markt. Dit beantwoordt de deelvraag over de tekortkomingen van huidige systemen.
+
+\subsection{Fase 7: Thesis Schrijven \& Presentatie (Week 12-14)}
+Afwerken van de bachelorproefscriptie en voorbereiden op de verdediging.
+
+\subsection{Mogelijke Tools \& Technologieën}
+\begin{itemize}
+    \item \textbf{Backend:} Python 3.11+, Scrapy, PostgreSQL, SQLAlchemy.
+    \item \textbf{Data Verwerking:} BeautifulSoup, FuzzyWuzzy.
+    \item \textbf{Notificatie:} SMTP / SendGrid / Mailgun.
+    \item \textbf{Uitrol:} Docker, Digital Ocean / AWS.
+\end{itemize}
+
+%---------- Verwachte resultaten ----------------------------------------------
+\section{Verwacht resultaat}
+\label{sec:verwachte_resultaten}
+
+Het verwachte eindresultaat is een functioneel Proof-of-Concept dat aan volgende criteria voldoet.
+
+\subsection{Beoogde resultaten}
+\begin{itemize}
+    \item \textbf{Architecturale Schaalbaarheid:} Het ontwerp is geslaagd als een nieuwe venue toegevoegd kan worden via een configuratiebestand, zonder wijzigingen aan de core-logica.
+    \item \textbf{Snelheid en Frequentie:} Het systeem hanteert een tweeledige tijdsnorm om zowel tijdigheid als gebruikerscomfort te garanderen:
+    \begin{itemize}
+        \item \textbf{Detectiesnelheid:} Nieuwe concerten worden binnen 4 uur na publicatie op de venue-website gedetecteerd en verwerkt door de scraper.
+        \item \textbf{Notificatie-interval:} Om notificatie-disruptie te vermijden, worden matches gebundeld en maximaal één keer per 24 uur via een gepersonaliseerde e-mail verzonden.
+    \end{itemize}
+    \item \textbf{Precisie:} Een matching-nauwkeurigheid van $>90\%$ waarbij notificaties strikt overeenkomen met de gebruikersvoorkeuren.
+    \item \textbf{Betrouwbaarheid:} Een delivery rate van $>95\%$ voor de verzonden e-mails.
+\end{itemize}
+
+\section{Verwachte conclusie}
+\label{sec:conclusie}
+
+Op basis van de voorgestelde methodologie wordt verwacht dat de conclusie zal bevestigen dat een gecentraliseerd, geautomatiseerd systeem een hogere relevantie en efficiëntie biedt voor de eindgebruiker dan manuele controle. Het onderzoek zal aantonen dat automatische monitoring van de versnipperde Vlaamse concertmarkt technisch haalbaar is binnen de gestelde tijdslimieten.
+
+\subsection{Meerwaarde}
+Voor gebruikers biedt het systeem tijdsbesparing en zekerheid dat ze geen concerten naar hun interesse missen. Voor de onderzoekers levert dit project een praktische case study op over de implementatie van voortdurende scraping en veranderingsdetectie, en biedt het inzicht in de update-frequenties van muziekvenues. Het project resulteert in een prototype dat als basis kan dienen voor verdere ontwikkelingen.
