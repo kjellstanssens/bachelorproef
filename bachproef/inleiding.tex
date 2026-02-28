@@ -5,46 +5,75 @@
 \chapter{\IfLanguageName{dutch}{Inleiding}{Introduction}}%
 \label{ch:inleiding}
 
-De inleiding moet de lezer net genoeg informatie verschaffen om het onderwerp te begrijpen en in te zien waarom de onderzoeksvraag de moeite waard is om te onderzoeken. In de inleiding ga je literatuurverwijzingen beperken, zodat de tekst vlot leesbaar blijft. Je kan de inleiding verder onderverdelen in secties als dit de tekst verduidelijkt. Zaken die aan bod kunnen komen in de inleiding~\autocite{Pollefliet2011}:
+Vlaanderen heeft een groot aanbod aan live muziek, verspreid over tientallen concertzalen zoals de AB, Trix, Vooruit, Botanique en vele anderen. Voor muziekliefhebbers is het een uitdaging om op de hoogte te blijven van alle evenementen. Dit komt door de versnippering van de informatie, ookal is de informatie online beschikbaar, is deze heel verspreid over individuele venue-websites waardoor het effectief gebruik door de eindgebruiker zeer lastig wordt. Gebruikers moeten handmatig 5 tot 10 websites controleren of vertrouwen op algoritmes van sociale media. \newline
+Het gevolg is dat ze de concerten vaak te laat ontdekken, hierdoor missen ze de kans op deelname. Onderzoek toont aan dat er een zekere nood is aan betere digitale ontsluiting van culturele informatie voor Vlaamse burgers\autocite{Rutten2018}.
 
-\begin{itemize}
-  \item context, achtergrond
-  \item afbakenen van het onderwerp
-  \item verantwoording van het onderwerp, methodologie
-  \item probleemstelling
-  \item onderzoeksdoelstelling
-  \item onderzoeksvraag
-  \item \ldots
-\end{itemize}
+Er bestaan reeds internationale platforms zoals Bandsintown en Songkick, maar deze hebben gebreken voor de specifieke Vlaamse context. Ze richten zich voornamelijk op internationale artiesten en hebben niet voldoende dekking over lokale zalen. Bij meerdere van deze platformen ontbreekt de mogelijkheid om specifiek venues te volgen in plaats van enkel artiesten.
 
 \section{\IfLanguageName{dutch}{Probleemstelling}{Problem Statement}}%
 \label{sec:probleemstelling}
 
-Uit je probleemstelling moet duidelijk zijn dat je onderzoek een meerwaarde heeft voor een concrete doelgroep. De doelgroep moet goed gedefinieerd en afgelijnd zijn. Doelgroepen als ``bedrijven,'' ``KMO's'', systeembeheerders, enz.~zijn nog te vaag. Als je een lijstje kan maken van de personen/organisaties die een meerwaarde zullen vinden in deze bachelorproef (dit is eigenlijk je steekproefkader), dan is dat een indicatie dat de doelgroep goed gedefinieerd is. Dit kan een enkel bedrijf zijn of zelfs één persoon (je co-promotor/opdrachtgever).
+Het kernprobleem is de informatieversnippering van concertgegevens in Vlaanderen. Concertinformatie staat verspreid over verschillende platformen met elk eigen HTML-formaten die niet eenvoudig door machines leesbaar zijn. Hierdoor moeten eindgebruikers onnodig veel tijd investeren in de manuele opvolging van hun interesses of vertrouwen op internationale tools die de lokale markt slechts ten dele dekken. 
+Er ontbreekt een gepersonaliseerd platform dat specifiek is afgestemd op de Vlaamse concertmarkt en gebruikers proactief per e-mail verwittigt. Met een generieke aanpak wordt bedoeld dat de ontwikkelde scraping-logica breed inzetbaar is voor verschillende HTML-structuren, zodat notificaties vanuit één centraal punt komen in plaats van versnipperde apps.
+De primaire doelgroep van dit onderzoek zijn Vlaamse concertgangers (leeftijd 18-65) die momenteel ontevreden zijn over het handmatig controleren van websites. Een secundaire doelgroep zijn ontwikkelaars met interesse in change detection systemen.
 
 \section{\IfLanguageName{dutch}{Onderzoeksvraag}{Research question}}%
 \label{sec:onderzoeksvraag}
 
-Wees zo concreet mogelijk bij het formuleren van je onderzoeksvraag. Een onderzoeksvraag is trouwens iets waar nog niemand op dit moment een antwoord heeft (voor zover je kan nagaan). Het opzoeken van bestaande informatie (bv. ``welke tools bestaan er voor deze toepassing?'') is dus geen onderzoeksvraag. Je kan de onderzoeksvraag verder specifiëren in deelvragen. Bv.~als je onderzoek gaat over performantiemetingen, dan 
+Dit onderzoek streeft naar een oplossing voor de volgende hoofdonderzoeksvraag:
+
+\begin{quote}
+\textit{Hoe kan een gepersonaliseerd e-mailnotificatiesysteem ontworpen worden dat Vlaamse concertgangers binnen 24 uur verwittigt van nieuwe concerten bij lokale venues, op basis van artiest- en locatievoorkeuren?}
+\end{quote}
+
+Om de hoofdonderzoeksvraag te beantwoorden is het onderzoek onderverdeeld in twee deelaspecten. Eerst worden de theoretische en praktische noden onderzocht in het probleemdomein. Vervolgens richt het onderzoek zich op het oplossingsdomein waarbij de technische uitwerking en validatie centraal staan. De volgende deelvragen dienen hierbij als leidraad:
+
+
+\textbf{Probleemdomein}
+\begin{itemize}
+    \item Welke metadata (startuur, voorprogramma, ticketprijs) worden in de literatuur en datastandaarden beschreven als essentieel voor concertnotificaties?
+    \item Wat zijn de functionele en content-gerelateerde tekortkomingen van Bandsintown en Songkick voor de Vlaamse markt?
+    \item Met welke frequentie updaten Vlaamse concertvenues gemiddeld hun kalenders en welk gevolg heeft dit voor de scrape-planning?
+    \item Welke best practices bestaan er rond notificatie-frequentie om \textit{notificatie disruptie} te vermijden?
+\end{itemize}
+
+\textbf{Oplossingsdomein}
+\begin{itemize}
+    \item Welke web scraping frameworks zijn het meest geschikt voor robuuste, periodieke monitoring van verschillende venue-websites?
+    \item Hoe kunnen veranderingsdetectie technieken geïmplementeerd worden om de nieuwe concerten van eerdere concerten te onderscheiden zonder valse positieven?
+    \item Welke data-architectuur is vereist om gebruikersvoorkeuren efficiënt te matchen aan binnenkomende concertdata?
+    \item Hoe kan het systeem schaalbaar opgezet worden zodat het eenvoudig uitbreidbaar is naar meerdere venues?
+    \item In welke mate voldoet het ontwikkelde prototype aan de vooraf gestelde technische criteria voor matching-nauwkeurigheid (>90\%), notificatiesnelheid (<4u) en schaalbaarheid?
+\end{itemize}
 
 \section{\IfLanguageName{dutch}{Onderzoeksdoelstelling}{Research objective}}%
 \label{sec:onderzoeksdoelstelling}
 
-Wat is het beoogde resultaat van je bachelorproef? Wat zijn de criteria voor succes? Beschrijf die zo concreet mogelijk. Gaat het bv.\ om een proof-of-concept, een prototype, een verslag met aanbevelingen, een vergelijkende studie, enz.
+Het verwachte eindresultaat is een functioneel Proof-of-Concept dat aan de volgende criteria voldoet.
+
+\subsection{Beoogde resultaten}
+\begin{itemize}
+    \item \textbf{Architecturale Schaalbaarheid:} Het ontwerp is geslaagd als een nieuwe venue toegevoegd kan worden via een configuratiebestand, zonder wijzigingen aan de core-logica.
+    \item \textbf{Snelheid en Frequentie:} Het systeem hanteert een tweeledige tijdsnorm om zowel tijdigheid als gebruikerscomfort te garanderen:
+    \begin{itemize}
+        \item \textbf{Detectiesnelheid:} Nieuwe concerten worden binnen 4 uur na publicatie op de venue-website gedetecteerd en verwerkt door de scraper.
+        \item \textbf{Notificatie-interval:} Om notificatie-disruptie te vermijden, worden matches gebundeld en maximaal één keer per 24 uur via een gepersonaliseerde e-mail verzonden.
+    \end{itemize}
+    \item \textbf{Precisie:} Een matching-nauwkeurigheid van $>90\%$ waarbij notificaties strikt overeenkomen met de gebruikersvoorkeuren.
+    \item \textbf{Betrouwbaarheid:} Een delivery rate van $>95\%$ voor de verzonden e-mails.
+\end{itemize}
 
 \section{\IfLanguageName{dutch}{Opzet van deze bachelorproef}{Structure of this bachelor thesis}}%
 \label{sec:opzet-bachelorproef}
-
-% Het is gebruikelijk aan het einde van de inleiding een overzicht te
-% geven van de opbouw van de rest van de tekst. Deze sectie bevat al een aanzet
-% die je kan aanvullen/aanpassen in functie van je eigen tekst.
 
 De rest van deze bachelorproef is als volgt opgebouwd:
 
 In Hoofdstuk~\ref{ch:stand-van-zaken} wordt een overzicht gegeven van de stand van zaken binnen het onderzoeksdomein, op basis van een literatuurstudie.
 
+In Hoofdstuk~\ref{ch:shortlist} wordt besproken waarom er voor de gebruikte technologiën is gekozen.
+
 In Hoofdstuk~\ref{ch:methodologie} wordt de methodologie toegelicht en worden de gebruikte onderzoekstechnieken besproken om een antwoord te kunnen formuleren op de onderzoeksvragen.
 
-% TODO: Vul hier aan voor je eigen hoofstukken, één of twee zinnen per hoofdstuk
+In Hoofdstuk~\ref{ch:proof-of-concept} wordt de proof of concept beschreven en worden de resultaten besproken.
 
 In Hoofdstuk~\ref{ch:conclusie}, tenslotte, wordt de conclusie gegeven en een antwoord geformuleerd op de onderzoeksvragen. Daarbij wordt ook een aanzet gegeven voor toekomstig onderzoek binnen dit domein.
