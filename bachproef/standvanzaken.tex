@@ -119,3 +119,21 @@ wordt de notificatie als storend ervaren in plaats van nuttig \autocite{Notifica
 
 Door de gestandaardiseerde metadata-structuur uit het onderzoek van \textcite{Graves2003} te combineren in dit contextuele framework,
 kan een intelligent systeem worden ontwikkeld dat de relevante concertinformatie aan gebruikers levert.
+
+\section{De evolutie van Web Data Extraction}
+
+\subsection{Van statische naar dynamische content}
+
+De methodes voor het verzamelen van webdata zijn de afgelopen decennia sterk geëvolueerd, parallel aan de evolutie van webtechnologieën \autocite{Tseriotis2025}.
+Vroeger bestonden webpagina's vooral uit statische HTML-documenten, die eenvoudig konden worden uitgelezen met traditionele webscraping-technieken.
+Vandaag de dag zijn deze webpagina's geëvolueerd naar dynamische en interactieve platformen.
+\textcite{Tseriotis2025} stelt dat deze evolutie een uitdaging vormt voor data-extractie door de toenemende resistentie tegen scraping-technieken.
+
+Een belangrijk verschil in het moderne web is de verschuiving van \textit{Server-Side Rendering} (SSR) naar \textit{Client-Side Rendering} (CSR) \autocite{Tseriotis2025}.
+Bij CSR worden webpagina's vaak geïmplementeerd als \textit{Single-Page Applications} (SPA), waarbij de inhoud dynamisch wordt geladen via JavaScript na het initiële laden en zichtbaar wordt door interactie met het \textit{Document Object Model} (DOM).
+Eerst wordt er een basis HTML-pagina geladen, dit dient dan als minimaal geraamte vooraleer de inhoud via API's of andere bronnen wordt opgehaald.
+Voor webscraping betekent dit dat de traditionele technieken niet meer volstaan aangezien het downloaden van de HTML-pagina niet langer de volledige inhoud oplevert.
+Het systeem moet nu een volledige browseromgeving simuleren om de asynchroon geladen data correct te kunnen verzamelen, dit omdat de scripts uitgevoerd moeten worden.
+
+Deze dynamische aard zorgt voor voortdurende veranderingen op het web zoals eerder vermeld \autocite{ChangeSurvey2019}.
+Door al deze wijzigingen eist het systeem een robuust monitoringsysteem dat in staat is om efficiënt om te gaan met de asynchrone aard van het moderne web \autocite{ChangeSurvey2019}.
