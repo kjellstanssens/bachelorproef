@@ -57,9 +57,44 @@ Hoewel Application Programming Interfaces (API's) vaak als oplossing wordt besch
 Er is dus werkelijk geen efficiënter alternatief dan web scraping om deze grote hoeveelheden data correct te consumeren \autocite{Vording2020}. 
 
 Tot slot zijn veel bestaande oplossingen beperkt in de timing van hun informatielevering \autocite{NotificationSurvey2017}. 
-Uit onderzoek van \textcite{NotificationSurvey2017} wordt geconcludeerd dat notificaties, die de aandacht van de gebruiker eisen, op een ongelegen moment eerder een omgekeerd effect hebben en dus niet voordelig zijn voor de gebruiker maar storend. 
+Uit onderzoek van \textcite{NotificationSurvey2017} wordt geconcludeerd dat notificaties, 
+die de aandacht van de gebruiker eisen, op een ongelegen moment eerder een omgekeerd effect hebben en dus niet voordelig zijn voor de gebruiker maar storend. 
 Indien er voortdurend notificaties op verkeerde momenten geleverd worden kan dit de oorzaak zijn van irritatie bij gebruikers en kan dit leiden het verwijderen van de corresponderende applicatie. 
 Dit benadrukt de noodzaak voor een intelligent systeem dat rekening houdt met de context van de ontvanger.
 
+\section{Semantiek en standaardisatie van eventgegevens}
 
+\subsection{Metadata-standaarden en ontologieën}
 
+Metadata speelt een cruciale rol in datasets aangezien het de context en structuur vormt die nodig is voor de verwerking \autocite{Rutten2018}.
+Volgens \textcite{Rutten2018} is het hergebruik van data zelfs bijna onmogelijk zonder grondige documentatie over de samenstelling en het gebruik ervan.
+In de context van dit onderwerp is een ontologie, een gestructureerde weergave van entiteiten en relaties binnen een domein, 
+belangrijk om de data van verscheidene bronnen te transformeren naar één semantisch model \autocite{Graves2003}.
+
+In het onderzoek van \textcite{Graves2003} is er een ontologie ontwikkeld om concertgegevens effectief te beschrijven in een digitale omgeving.
+Het doel van deze ontwikkelde ontologie is een verbetering bieden tegenover de bestaande versnipperde methoden door gebruik te maken van het framework:
+\textit{Resource Description Framework} (RDF) \autocite{Graves2003}.
+Het doel is een universeel formaat te creëren zodat de concertgegevens efficiënter leesbaar en herbruikbaar worden voor diverse applicaties.
+Op figuur \ref{fig:ontology} wordt de visuele representatie van deze ontologie weergegeven.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{ConcertEventOntology.png}
+    \caption[Concert event ontologie]{\label{fig:ontology}Visuele voorstelling van de ontologie ~\autocite{Graves2003}}
+\end{figure}
+
+Binnen dit framework worden entiteiten en eigenschappen gedefinieerd die de basis vormen voor de eventdata \autocite{Graves2003}.
+Om tot dit resultaat te komen zijn volgende eigenschappen gedefinieerd door \textcite{Graves2003}:
+
+\begin{itemize}
+    \item \textbf{startTime:} De eigenschap die bepaald wanneer een concert begint \autocite{Graves2003}.
+    Er wordt gespecificeerd dat deze eigenschap het datatype \texttt{xsd:dateTime} moet zijn om filtering mogelijk te maken.
+    \item \textbf{ticketPrice:} Deze eigenschap definieert de kostprijs om het concert bij te wonen en is een \texttt{xsd:decimal} \autocite{Graves2003}.
+    \item \textbf{doorsOpenTime:} Naast de starttijd van het concert definieert \textcite{Graves2003} ook de tijd wanneer de deuren van de zaal openen.
+    \item \textbf{restriction (age):} Deze eigenschap is cruciaal voor filtering indien er leeftijdsrestricties op de toegang van een concert zijn \autocite{Graves2003}.
+    \item \textbf{limit:} Ook wordt er een eigenschap gedefinieerd om het aantal tickets per individuele klant te beperken om misbruik te voorkomen en voorraadbeheer te faciliteren \autocite{Graves2003}.
+\end{itemize}
+
+Door deze eigenschappen te hanteren kan ongestructureerde data van diverse websites omgezet worden naar betekenisvolle data.
+Dit sluit aan bij de visie van \textcite{Zangerle2018}, die stelt dat gebruikersmodellen ook contextuele aspecten als tijd en locatie moeten bevatten.
+Deze contextuele informatie is belangrijk om relevantie te garanderen. 
