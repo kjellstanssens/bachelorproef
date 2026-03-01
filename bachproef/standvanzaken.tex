@@ -29,11 +29,11 @@ Hoewel iedereen deze data kan consulteren, slaagt niet iedereen erin om deze eff
 Webscraping is volgens \textcite{Vording2020} de optimale technologie om dit probleem aan te pakken, aangezien het zowel ongestructureerde als gestructureerde data geautomatiseerd kan verzamelen en omzetten tot bruikbare formaten.
 
 Deze transformatie is cruciaal voor het hergebruik van de data \autocite{Rutten2018}. 
-\textcite{Rutten2018} toont aan dat data moet worden aangeboden in een formaat dat aansluit bij de behoeften van de eindgebruiker om het hergebruik ervan te optimaliseren. 
+\textcite{Rutten2018} tonen aan dat data moet worden aangeboden in een formaat dat aansluit bij de behoeften van de eindgebruiker om het hergebruik ervan te optimaliseren. 
 Bij onvoldoende documentatie over de samenstelling en herkomst van de datasets vormt dit bovendien een aanzienlijke belemmering voor digitale innovatie.
 
 Een bijkomende complicatie is de dynamische aard van het moderne web \autocite{ChangeSurvey2019}. 
-\textcite{ChangeSurvey2019} observeert dat de meerderheid van de websites voortdurende wijzigingen ondergaat; informatie wordt toegevoegd, aangepast en verwijderd. 
+\textcite{ChangeSurvey2019} observeren dat de meerderheid van de websites voortdurende wijzigingen ondergaat; informatie wordt toegevoegd, aangepast en verwijderd. 
 Voor gebruikers die deze data willen consumeren, is het manueel opvolgen hiervan nagenoeg onmogelijk. 
 Hiervoor is \textit{change detection} ontwikkeld en zijn er geautomatiseerde notificatiesystemen ontworpen. 
 De implementatie van deze technologieën wordt echter complexer door de evolutie van de webtechnologieën, die steeds dynamischer en resistenter tegen webscraping worden \autocite{Tseriotis2025}.
@@ -41,8 +41,25 @@ De implementatie van deze technologieën wordt echter complexer door de evolutie
 Organisaties die regelmatig grote hoeveelheden data consumeren, kunnen niet langer rekenen op menselijke tussenkomst; zij hebben nood aan geautomatiseerde systemen om dit op een rendabele manier uit te voeren \autocite{Vording2020}. 
 \textcite{Huang2021} stelt dat de minimalisatie van de menselijke factor in de scraping-workflows essentieel is voor de schaalbaarheid en efficiëntie van het systeem. 
 Ondanks de aanwezigheid van metadata-standaarden voor concerten, wijst onderzoek uit dat bestaande implementaties beperkingen hebben in hun bruikbaarheid \autocite{Graves2003}. 
-\textcite{Zangerle2018} bevestigt dit en vult aan dat hoewel gebruikersmodellen die muzikale voorkeuren bevatten essentieel zijn voor filtering, het potentieel hiervan nog niet volledig benut wordt.
+\textcite{Zangerle2018} bevestigen dit en vullen aan dat hoewel gebruikersmodellen die muzikale voorkeuren bevatten essentieel zijn voor filtering, het potentieel hiervan nog niet volledig benut wordt.
 
 \subsection{Bestaande oplossingen en hun beperkingen}
+
+Bestaande platformen, zoals Bandsintown en verscheidene sociale mediakanalen, maken gebruik van algemene aanbevelingsalgoritmes \autocite{Zangerle2018}. 
+\textcite{Zangerle2018} beweren dat dit niet optimaal is, aangezien gebruikers vaak intresse hebben in uiteenlopende genres. 
+De gehanteerde algoritmes berekenen echter een gemiddelde van het luistergedrag en dit gemiddelde is dus geen nauwkeurige representatie van hun muziekinteresses. 
+De gebruikersmodellen die hiervoor gebruikt worden zouden hier dus rekening mee moeten houden.
+
+Naast de tekortkomingen in personalisatie is er een probleem met de wijze waarop eventdata technisch wordt ontsloten \autocite{Rutten2018}. 
+Daarom moet volgens \textcite{Rutten2018} bij elke vorm van digitale collecties een overleg gebeuren met de potentiële hergebruikers van die data. 
+Deze bewering toont aan dat er niet genoeg rekening gehouden wordt met hoe externe systemen deze data moeten consumeren. 
+Hoewel Application Programming Interfaces (API's) vaak als oplossing wordt beschouwd, blijkt in de praktijk vaak dat dit voor nichemarkten dit niet altijd het geval is. 
+Er is dus werkelijk geen efficiënter alternatief dan web scraping om deze grote hoeveelheden data correct te consumeren \autocite{Vording2020}. 
+
+Tot slot zijn veel bestaande oplossingen beperkt in de timing van hun informatielevering \autocite{NotificationSurvey2017}. 
+Uit onderzoek van \textcite{NotificationSurvey2017} wordt geconcludeerd dat notificaties, die de aandacht van de gebruiker eisen, op een ongelegen moment eerder een omgekeerd effect hebben en dus niet voordelig zijn voor de gebruiker maar storend. 
+Indien er voortdurend notificaties op verkeerde momenten geleverd worden kan dit de oorzaak zijn van irritatie bij gebruikers en kan dit leiden het verwijderen van de corresponderende applicatie. 
+Dit benadrukt de noodzaak voor een intelligent systeem dat rekening houdt met de context van de ontvanger.
+
 
 
