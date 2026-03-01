@@ -98,3 +98,24 @@ Om tot dit resultaat te komen zijn volgende eigenschappen gedefinieerd door \tex
 Door deze eigenschappen te hanteren kan ongestructureerde data van diverse websites omgezet worden naar betekenisvolle data.
 Dit sluit aan bij de visie van \textcite{Zangerle2018}, die stelt dat gebruikersmodellen ook contextuele aspecten als tijd en locatie moeten bevatten.
 Deze contextuele informatie is belangrijk om relevantie te garanderen. 
+
+\subsection{De hiërarchie en context van concertinformatie}
+
+Een semantisch model voor concerten bestaat niet enkel uit een verzameling van eigenschappen,
+maar ook uit verschillende entiteiten die onderling relaties hebben.
+Volgens \textcite{Graves2003} bestaat een concert uit drie kernentiteiten: het evenement \textit{Event}, de artiest \textit{Performer} en de locatie \textit{Venue}.
+Het evenement is de centrale entiteit die de artiest en locatie koppelt. Deze structuur is essentieel voor de datastructuur omdat één wijziging in een eigenschap invloed heeft op alle verbonden entiteiten.
+Bijvoorbeeld, een wijziging in de starttijd, dit zorgt ervoor dat de artiest en locatie beschikbaar moeten zijn op het nieuwe tijdstip.
+
+Hoewel deze structuur noodzakelijk is om de integriteit van de data te bewaken, heeft de eindgebruiker een grote invloed op de relevantie van de informatie.
+Zo stelt \textcite{Zangerle2018} dat statische gebruikersmodellen, die enkel gebaseerd zijn op het gemiddelde luistergedrag,
+tekortschieten in aanbevelen van een concert. De contextuele aspecten zoals afstand en tijdstip van het evenement beïnvloeden namelijk de gebruikersvoorkeuren.
+
+De effectiviteit van de notificatiesystemen is dus ook sterk beïnvloed door de contextuele factoren van de gebruiker.
+Intelligente systemen moeten rekening houden met de \textit{receptiviteit} van de gebruiker, 
+dit betekent dat ook de locatie en het tijdstip van het concert in overweging moeten genomen worden en niet enkel de muzikale match \autocite{NotificationSurvey2017}.
+In het geval dat er een notificatie wordt gestuurd van een relevante artiest, maar het is een ongunstige locatie of tijdstip, 
+wordt de notificatie als storend ervaren in plaats van nuttig \autocite{NotificationSurvey2017}.
+
+Door de gestandaardiseerde metadata-structuur uit het onderzoek van \textcite{Graves2003} te combineren in dit contextuele framework,
+kan een intelligent systeem worden ontwikkeld dat de relevante concertinformatie aan gebruikers levert.
