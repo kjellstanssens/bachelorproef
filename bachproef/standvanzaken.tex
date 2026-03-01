@@ -15,37 +15,34 @@ Je verwijst bij elke bewering die je doet, vakterm die je introduceert, enz.\ na
 
 Let er ook op: het \texttt{cite}-commando voor de punt, dus binnen de zin. Je verwijst meteen naar een bron in de eerste zin die erop gebaseerd is, dus niet pas op het einde van een paragraaf.
 
-\begin{figure}
-  \centering
-  \includegraphics[width=0.8\textwidth]{grail.jpg}
-  \caption[Voorbeeld figuur.]{\label{fig:grail}Voorbeeld van invoegen van een figuur. Zorg altijd voor een uitgebreid bijschrift dat de figuur volledig beschrijft zonder in de tekst te moeten gaan zoeken. Vergeet ook je bronvermelding niet!}
-\end{figure}
 
-\begin{listing}
-  \begin{minted}{python}
-    import pandas as pd
-    import seaborn as sns
+\section{Het digitale landschap van concertdistributie}
 
-    penguins = sns.load_dataset('penguins')
-    sns.relplot(data=penguins, x="flipper_length_mm", y="bill_length_mm", hue="species")
-  \end{minted}
-  \caption[Voorbeeld codefragment]{Voorbeeld van het invoegen van een codefragment.}
-\end{listing}
+\subsection{Versnippering van eventdata}
 
-\lipsum[7-20]
+In de hedendaagse samenleving wordt data vaak omschreven als ``het nieuwe goud'' \autocite{Tseriotis2025}. 
+Dit komt omdat de waarde van data voortdurend stijgt; het speelt een grote rol in sectoren variërend van handel tot wetenschappelijk onderzoek. 
+\textcite{Tseriotis2025} stelt dat het bezitten van deze data op zich niet voldoende is, maar dat de waarde ervan sterk afhankelijk is van de structuur en integriteit van de datasets.
 
-\begin{table}
-  \centering
-  \begin{tabular}{lcr}
-    \toprule
-    \textbf{Kolom 1} & \textbf{Kolom 2} & \textbf{Kolom 3} \\
-    $\alpha$         & $\beta$          & $\gamma$         \\
-    \midrule
-    A                & 10.230           & a                \\
-    B                & 45.678           & b                \\
-    C                & 99.987           & c                \\
-    \bottomrule
-  \end{tabular}
-  \caption[Voorbeeld tabel]{\label{tab:example}Voorbeeld van een tabel.}
-\end{table}
+Er is een enorme hoeveelheid data publiekelijk beschikbaar op het internet \autocite{Vording2020}, maar de vorm waarin deze toegankelijk is, vormt de grootste uitdaging. 
+Hoewel iedereen deze data kan consulteren, slaagt niet iedereen erin om deze efficiënt te verzamelen in een heterogene omgeving. 
+Webscraping is volgens \textcite{Vording2020} de optimale technologie om dit probleem aan te pakken, aangezien het zowel ongestructureerde als gestructureerde data geautomatiseerd kan verzamelen en omzetten tot bruikbare formaten.
+
+Deze transformatie is cruciaal voor het hergebruik van de data \autocite{Rutten2018}. 
+\textcite{Rutten2018} toont aan dat data moet worden aangeboden in een formaat dat aansluit bij de behoeften van de eindgebruiker om het hergebruik ervan te optimaliseren. 
+Bij onvoldoende documentatie over de samenstelling en herkomst van de datasets vormt dit bovendien een aanzienlijke belemmering voor digitale innovatie.
+
+Een bijkomende complicatie is de dynamische aard van het moderne web \autocite{ChangeSurvey2019}. 
+\textcite{ChangeSurvey2019} observeert dat de meerderheid van de websites voortdurende wijzigingen ondergaat; informatie wordt toegevoegd, aangepast en verwijderd. 
+Voor gebruikers die deze data willen consumeren, is het manueel opvolgen hiervan nagenoeg onmogelijk. 
+Hiervoor is \textit{change detection} ontwikkeld en zijn er geautomatiseerde notificatiesystemen ontworpen. 
+De implementatie van deze technologieën wordt echter complexer door de evolutie van de webtechnologieën, die steeds dynamischer en resistenter tegen webscraping worden \autocite{Tseriotis2025}.
+
+Organisaties die regelmatig grote hoeveelheden data consumeren, kunnen niet langer rekenen op menselijke tussenkomst; zij hebben nood aan geautomatiseerde systemen om dit op een rendabele manier uit te voeren \autocite{Vording2020}. 
+\textcite{Huang2021} stelt dat de minimalisatie van de menselijke factor in de scraping-workflows essentieel is voor de schaalbaarheid en efficiëntie van het systeem. 
+Ondanks de aanwezigheid van metadata-standaarden voor concerten, wijst onderzoek uit dat bestaande implementaties beperkingen hebben in hun bruikbaarheid \autocite{Graves2003}. 
+\textcite{Zangerle2018} bevestigt dit en vult aan dat hoewel gebruikersmodellen die muzikale voorkeuren bevatten essentieel zijn voor filtering, het potentieel hiervan nog niet volledig benut wordt.
+
+\subsection{Bestaande oplossingen en hun beperkingen}
+
 
