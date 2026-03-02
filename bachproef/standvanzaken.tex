@@ -7,14 +7,18 @@
 
 % Pas na deze inleidende paragraaf komt de eerste sectiehoofding.
 
-Dit hoofdstuk bevat je literatuurstudie. De inhoud gaat verder op de inleiding, maar zal het onderwerp van de bachelorproef *diepgaand* uitspitten. De bedoeling is dat de lezer na lezing van dit hoofdstuk helemaal op de hoogte is van de huidige stand van zaken (state-of-the-art) in het onderzoeksdomein. Iemand die niet vertrouwd is met het onderwerp, weet nu voldoende om de rest van het verhaal te kunnen volgen, zonder dat die er nog andere informatie moet over opzoeken \autocite{Pollefliet2011}.
+In dit hoofdstuk wordt de theoretische kennis verworven om deze bachelorproef te begeleiden door middel van een uitgebreide literatuurstudie naar de huidige stand van zaken binnen het onderzoeksdomein. 
+Waar de inleiding de algemene problematiek van versnipperde eventdata en de noodzaak voor een gecentraliseerd notificatiesysteem schetste, 
+spitst dit hoofdstuk zich toe op de dieperliggende technische en conceptuele uitdagingen. 
+De hier verzamelde inzichten vormen de noodzakelijke brug tussen de probleemstelling en de methodologie, 
+waarin de ontwerpkeuzes voor het uiteindelijke artefact worden verantwoord.
 
-Je verwijst bij elke bewering die je doet, vakterm die je introduceert, enz.\ naar je bronnen. In \LaTeX{} kan dat met het commando \texttt{$\backslash${textcite\{\}}} of \texttt{$\backslash${autocite\{\}}}. Als argument van het commando geef je de ``sleutel'' van een ``record'' in een bibliografische databank in het Bib\LaTeX{}-formaat (een tekstbestand). Als je expliciet naar de auteur verwijst in de zin (narratieve referentie), gebruik je \texttt{$\backslash${}textcite\{\}}. Soms is de auteursnaam niet expliciet een onderdeel van de zin, dan gebruik je \texttt{$\backslash${}autocite\{\}} (referentie tussen haakjes). Dit gebruik je bv.~bij een citaat, of om in het bijschrift van een overgenomen afbeelding, broncode, tabel, enz. te verwijzen naar de bron. In de volgende paragraaf een voorbeeld van elk.
-
-\textcite{Knuth1998} schreef een van de standaardwerken over sorteer- en zoekalgoritmen. Experten zijn het erover eens dat cloud computing een interessante opportuniteit vormen, zowel voor gebruikers als voor dienstverleners op vlak van informatietechnologie~\autocite{Creeger2009}.
-
-Let er ook op: het \texttt{cite}-commando voor de punt, dus binnen de zin. Je verwijst meteen naar een bron in de eerste zin die erop gebaseerd is, dus niet pas op het einde van een paragraaf.
-
+De structuur van dit hoofdstuk volgt de logische opbouw van het systeem. Eerst wordt het digitale landschap van concertdistributie geanalyseerd om de tekortkomingen van de huidige toestand te identificeren. 
+Vervolgens wordt onderzocht hoe semantiek en metadata-standaarden, zoals specifieke concertontologieën, kunnen bijdragen aan een universele structurering van deze data. 
+Deze informatie zorgt ervoor dat de versnipperde data van verschillende bronnen naar een uniform formaat kan worden omgezet, wat het bruikbaar maakt voor een geautomatiseerd systeem.
+Daarnaast wordt de technische evolutie van \textit{web data extraction} besproken om de complexiteit van het moderne, dynamische web te kaderen. 
+Ten slotte wordt de wetenschappelijke basis van notificatiesystemen belicht, met een specifieke focus op het vermijden van notificatievermoeidheid. 
+Deze theoretische verkenning biedt het kader dat nodig is om de technologische keuzes en de systeemarchitectuur in de volgende hoofdstukken volledig te begrijpen.
 
 \section{Het digitale landschap van concertdistributie}
 
@@ -46,7 +50,7 @@ Ondanks de aanwezigheid van metadata-standaarden voor concerten, wijst onderzoek
 \subsection{Bestaande oplossingen en hun beperkingen}
 
 Bestaande platformen, zoals Bandsintown en verscheidene sociale mediakanalen, maken gebruik van algemene aanbevelingsalgoritmes \autocite{Zangerle2018}. 
-\textcite{Zangerle2018} beweren dat dit niet optimaal is, aangezien gebruikers vaak intresse hebben in uiteenlopende genres. 
+\textcite{Zangerle2018} beweren dat dit niet optimaal is, aangezien gebruikers vaak interesse hebben in uiteenlopende genres. 
 De gehanteerde algoritmes berekenen echter een gemiddelde van het luistergedrag en dit gemiddelde is dus geen nauwkeurige representatie van hun muziekinteresses. 
 De gebruikersmodellen die hiervoor gebruikt worden zouden hier dus rekening mee moeten houden.
 
