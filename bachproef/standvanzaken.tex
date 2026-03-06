@@ -43,7 +43,7 @@ Hiervoor is \textit{change detection} ontwikkeld en zijn er geautomatiseerde not
 De implementatie van deze technologieën wordt echter complexer door de evolutie van de webtechnologieën, die steeds dynamischer en resistenter tegen webscraping worden \autocite{Tseriotis2025}.
 
 Organisaties die regelmatig grote hoeveelheden data consumeren, kunnen niet langer rekenen op menselijke tussenkomst; zij hebben nood aan geautomatiseerde systemen om dit op een rendabele manier uit te voeren \autocite{Vording2020}. 
-\textcite{Huang2021} stelt dat de minimalisatie van de menselijke factor in de scraping-workflows essentieel is voor de schaalbaarheid en efficiëntie van het systeem. 
+\textcite{Lin2021} stelt dat de minimalisatie van de menselijke factor in de scraping-workflows essentieel is voor de schaalbaarheid en efficiëntie van het systeem. 
 Ondanks de aanwezigheid van metadata-standaarden voor concerten, wijst onderzoek uit dat bestaande implementaties beperkingen hebben in hun bruikbaarheid \autocite{Graves2003}. 
 \textcite{Zangerle2018} bevestigen dit en vullen aan dat hoewel gebruikersmodellen die muzikale voorkeuren bevatten essentieel zijn voor filtering, het potentieel hiervan nog niet volledig benut wordt.
 
@@ -144,7 +144,16 @@ Door al deze wijzigingen eist het systeem een robuust monitoringsysteem dat in s
 
 \subsection{Barrières en defensieve mechanismen}
 
+Door de toenenemde waarde van digitale data worden er steeds meer geavanceerde defensieve mechanismen geïmplementeerd die het geautomatiseerd verzamelen van de data bemoeilijken \autocite{Tseriotis2025}.
+\textcite{Tseriotis2025} stelt dat scraping tegenwoordig geconfronteerd wordt met meerdere lagen van deze mechanismen die variëren van CAPTCHA's en IP-blokkades tot browser fingerprinting en bot detectie algoritmen.
+Deze barrières zijn er om de integriteit van de website te beschermen en om serverbelasting door bots te reguleren.
+
+Een van de meest geavanceerde mechanismen is \textit{browser fingerprinting}. Dit is een techniek waarbij de unieke kenmerken van een browser worden geanalyseerd om te bepalen of dit een legitieme gebruiker is, dit aan de hand van omgevingsvariabelen zoals browserversie, plugins, schermresolutie, tijdzone, besturingssysteem, enzovoort \autocite{Tseriotis2025}. Dit is een zeer effectieve manier om bots te detecteren, aangezien bots vaak een headless browser gebruiken die een minimale fingerprint heeft.
+De laatste ontwikkelingen in scrapingsmechanismen tonen wel aan dat sommige tools in staat zijn om een volledige browser te simuleren.
+
 \subsection{Ethiek en legaliteit}
+
+
 
 \section{Notificatiesystemen en gebruikersrelevantie}
 
