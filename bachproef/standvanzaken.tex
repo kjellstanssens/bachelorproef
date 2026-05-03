@@ -29,7 +29,8 @@ Dit komt omdat de waarde van data voortdurend stijgt; het speelt een grote rol i
 \textcite{Tseriotis2025} stelt dat het bezitten van deze data op zich niet voldoende is, maar dat de waarde ervan sterk afhankelijk is van de structuur en integriteit van de datasets.
 
 Er is een enorme hoeveelheid data publiekelijk beschikbaar op het internet \autocite{Vording2020}, maar de vorm waarin deze toegankelijk is, vormt de grootste uitdaging. 
-Hoewel iedereen deze data kan consulteren, slaagt niet iedereen erin om deze efficiënt te verzamelen in een heterogene omgeving. 
+Hoewel iedereen deze data kan consulteren, slaagt niet iedereen erin om deze efficiënt te verzamelen in een heterogene omgeving. In de praktijk betekent dit dat een Vlaamse concertganger handmatig websites van verscheidene zalen zoals de Ancienne Belgique (AB), Trix, de VIERNULVIER (voorheen Vooruit), enzovoort moet monitoren. 
+Elk van deze websites hanteert een eigen structuur en presentatiewijze, wat de complexiteit van handmatige monitoring verhoogt en de noodzaak voor een geautomatiseerd, overkoepelend systeem onderbouwt.
 Webscraping is volgens \textcite{Vording2020} de optimale technologie om dit probleem aan te pakken, aangezien het zowel ongestructureerde als gestructureerde data geautomatiseerd kan verzamelen en omzetten tot bruikbare formaten.
 
 Deze transformatie is cruciaal voor het hergebruik van de data \autocite{Rutten2018}. 
@@ -54,10 +55,26 @@ Bestaande platformen, zoals Bandsintown en verscheidene sociale mediakanalen, ma
 De gehanteerde algoritmes berekenen echter een gemiddelde van het luistergedrag en dit gemiddelde is dus geen nauwkeurige representatie van hun muziekinteresses. 
 De gebruikersmodellen die hiervoor gebruikt worden zouden hier dus rekening mee moeten houden.
 
-Naast de tekortkomingen in personalisatie is er een probleem met de wijze waarop eventdata technisch wordt ontsloten \autocite{Rutten2018}. 
+Naast de algemene algoritmische beperkingen kampen de bestaande oplossingen ook met aanzienlijke fouten in de data. 
+Volgende informatie is verzameld gedurende een korte case study van het Bandsintown- en Songkickplatform:
+
+\textcite{Bandsintown}:
+\begin{itemize}
+    \item \textbf{Foutieve informatie:} De venue-pagina van VIERNULVIER wordt nog steeds weergegeven onder de verouderde benaming Vooruit. Ook is er een aanzienlijke fout in de data, het toont dat de website voor deze venue www.vooruit.be is, terwijl dit domein op dit moment de website van de Vlaamse politieke partij "Vooruit" voorstelt. Dit verlaagt de geloofwaardigheid (veracity) van het platform aanzienlijk.
+    \item \textbf{Ontbrekende informatie:} Er ontbreken zeer veel concerten bij Vlaamse venues, dit komt doordat er enkel grotere concerten worden weergegeven. Ook bij lokale artiesten staat er dat er geen geplande concerten zijn terwijl de venue waar dit plaatsvindt dit wel op hun website vermeldt. Dit komt ook doordat enkel de hoofdartiest wordt weergegeven, terwijl er ook soms meerdere artiesten optreden. Er is een duidelijke focus op de mainstream.
+\end{itemize}
+
+\textcite{Songkick}:
+\begin{itemize}
+    \item \textbf{Foutieve informatie:} Ook hier heet de venue pagina van VIERNULVIER nog steeds Vooruit.
+    \item \textbf{Ontbrekende informatie:} Precies zoals bij Bandsintown ontbreken er ook veel concerten bij Vlaamse venues. Ook hier worden enkel grotere concerten weergegeven, terwijl er ook veel kleinere concerten plaatsvinden die niet worden weergegeven. Lokale artiesten lijken dan ook niet op te treden, terwijl deze wel degelijk optreden in Vlaamse venues, het heeft dan ook niet veel zin dat de gebruiker zich inschrijft op deze platformen aangezien er veel relevante informatie ontbreekt.
+    \item \textbf{Ethisch dilemma:} Het platform staat vol met advertenties en verwijst naar externe ticketing platforms, dit zorgt ervoor dat de originele partij geen inkomsten genereert bij het gebruik van deze platformen ondanks dat deze de data aanbiedt. Er staat op de venue pagina's ook geen URL naar de originele website van de venue.
+\end{itemize}
+
+Naast de tekortkomingen in personalisatie is er een probleem met de wijze waarop eventdata technisch beschikbaar wordt gesteld \autocite{Rutten2018}. 
 Daarom moet volgens \textcite{Rutten2018} bij elke vorm van digitale collecties een overleg gebeuren met de potentiële hergebruikers van die data. 
 Deze bewering toont aan dat er niet genoeg rekening gehouden wordt met hoe externe systemen deze data moeten consumeren. 
-Hoewel Application Programming Interfaces (API's) vaak als oplossing wordt beschouwd, blijkt in de praktijk vaak dat dit voor nichemarkten dit niet altijd het geval is. 
+Hoewel Application Programming Interfaces (API's) vaak als oplossing worden beschouwd, blijkt in de praktijk vaak dat dit voor nichemarkten dit niet altijd het geval is. 
 Er is dus werkelijk geen efficiënter alternatief dan web scraping om deze grote hoeveelheden data correct te consumeren \autocite{Vording2020}. 
 
 Tot slot zijn veel bestaande oplossingen beperkt in de timing van hun informatielevering \autocite{NotificationSurvey2017}. 
@@ -91,7 +108,7 @@ Binnen dit framework worden entiteiten en eigenschappen gedefinieerd die de basi
 Om tot dit resultaat te komen zijn volgende eigenschappen gedefinieerd door \textcite{Graves2003}:
 
 \begin{itemize}
-    \item \textbf{startTime:} De eigenschap die bepaald wanneer een concert begint \autocite{Graves2003}.
+    \item \textbf{startTime:} De eigenschap die bepaalt wanneer een concert begint \autocite{Graves2003}.
     Er wordt gespecificeerd dat deze eigenschap het datatype \texttt{xsd:dateTime} moet zijn om filtering mogelijk te maken.
     \item \textbf{ticketPrice:} Deze eigenschap definieert de kostprijs om het concert bij te wonen en is een \texttt{xsd:decimal} \autocite{Graves2003}.
     \item \textbf{doorsOpenTime:} Naast de starttijd van het concert definieert \textcite{Graves2003} ook de tijd wanneer de deuren van de zaal openen.
@@ -155,11 +172,31 @@ De laatste ontwikkelingen in scrapingsmechanismen tonen wel aan dat sommige tool
 
 \subsection{Ethiek en legaliteit}
 
+Hoewel webscraping veel vooruitgang ziet, bevindt het gebruik ervan zich nog in een grijs gebied aangezien er geen specifieke wetgeving is die dit reguleert \autocite{Krotov2018}. \textcite{Krotov2018} identificeren 4 juridische kwesties waarop claims tegen webscraping gebaseerd kunnen zijn: contractbreuk via \textit{Terms of Service} (ToS), schending van auteursrechten, schending van de Computer Fraud and Abuse Act (CFAA) en de onrechtmatige daad van \textit{trespass to chattels}. Deze laatste claim wordt vooral gebruikt wanneer scraping de server overbelast.
 
+In de Europese Unie valt webscraping voornamelijk onder de Algemene Verordening Gegevensbescherming (AVG/GDPR) \autocite{Bereczki2024}. Bij het scrapen van publieke data, zoals concertinformatie, is \textit{Lawfulness of processing (Article 6(1)(f)} (vastgelegd in AVG \autocite{GDPR}) cruciaal. Dit artikel houdt in dat de verwerking van de data noodzakelijk moet zijn voor de legitieme belangen van de derde partij. In dit onderzoek is het legitieme belang het aanbieden van een gecentraliseerd notificatiesysteem en het scrapen van de publieke concertinformatie is noodzakelijk om dit aan de eindgebruikers te kunnen leveren.
+
+Naast de juridische aspecten zijn ethische overwegingen ook curciaal, zo kan een scraping-mechanisme ervoor zorgen dat de gebruiker niet bijdraagt aan het genereren van inkomsten bij de originele partij, aangezien deze bijvoorbeeld niet aan de advertenties wordt blootgesteld \autocite{Krotov2018}. Ook kan het scrape-project een concurrerende dienst zijn die de originele partij schaadt. Daarom is het van belang dat men bij implementatie van een scraping-mechanisme de impact op bronorganisaties/dataleveranciers minimaliseert.
+
+Om dit scrape-project te realiseren met de huidige juridische en ethische normen, dienen de volgende afspraken na geleefd te worden \autocite{Bereczki2024,Lin2021}:
+
+\begin{itemize}
+\item \textbf{Respecteren van de wensen van de eigenaar:} Het naleven van \texttt{robots.txt} en \texttt{ai.txt}.
+\item \textbf{Dataminimalisatie:} Het onmiddellijk filteren van data om enkel relevante evenementinformatie te behouden.
+\item \textbf{Serverbelasting:} Het hanteren van een redelijke extractiefrequentie om de beschikbaarheid van de doelwebsite voor reguliere gebruikers te waarborgen.
+\item \textbf{Toegankelijkheid:} Het vermijden van niet publiek toegankelijke data.
+\end{itemize}
 
 \section{Notificatiesystemen en gebruikersrelevantie}
 
 \subsection{Informatie-overload en notificatievermoeidheid}
 
+In het huidige digitale tijdperk worden gebruikers continu blootgesteld aan een overvloed aan informatie, wat leidt tot informatie-overload \autocite{NotificationSurvey2017}. Dit komt door de push-based notificaties zoals meldingen op mobiele apparaten. Deze overvloed aan prikkels kan leiden tot notificatievermoeidheid, een fenomeen waarbij gebruikers het gevoel hebben dat ze constant gestoord worden door irrelevante of slecht getimede notificaties. Uit onderzoek blijkt dat notificaties die aandacht eisen op ongelegen momenten leiden tot irritatie en uiteindelijk tot het verwijderen van de notificatiebron. Het gevolg hiervan is dat ook relevante informatie genegeerd wordt, wat de effectiviteit van het notificatiesysteem vermindert. Om negatieve effecten te minimaliseren is het van groot belang dat notificatiesystemen rekening houden met de vorm en timing van de notificaties. 
+
+\textcite{Lin2021} benadrukt dat het minimaliseren van de menselijke factor in de scraping-workflow essentieel is voor de schaalbaarheid en efficiëntie van het systeem. Door de extractie-logica breed inzetbaar te maken voor verschillende HTML-structuren, kunnen notificaties vanuit één centraal punt worden verzonden in plaats van via versnipperde applicaties. Dit vermindert de kans op notificatievermoeidheid, aangezien gebruikers slechts één bron van notificaties hebben die relevant is voor hun interesses.
+
 \subsection{Context en timing van notificaties}
 
+Om de negatieve effecten van notificatievermoeidheid te vermijden, moet een intelligent notificatiesysteem rekening houden met de context van de eindgebruiker. \textcite{NotificationSurvey2017} stellen dat dit de receptiviteit van de gebruiker verhoogt. Niet alleen de inhoudelijke relevantie van de notificatie is belangrijk, maar ook de externe factoren zoals fysieke locatie van de eindgebruiker en het tijdstip van de notificatie.
+
+\textcite{Zangerle2018} bevestigen dat effectieve gebruikersmodellen ook contextuele aspecten zoals afstand en timing moeten bevatten. Een notificatie van een relevante artiest kan als storend worden ervaren als het concert op een ongunstige locatie of tijdstip plaatsvindt.
