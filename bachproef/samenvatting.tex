@@ -36,7 +36,6 @@
 \IfLanguageName{english}{%
 \selectlanguage{dutch}
 \chapter*{Samenvatting}
-\lipsum[1-4]
 \selectlanguage{english}
 }{}
 
@@ -45,4 +44,23 @@
 
 \chapter*{\IfLanguageName{dutch}{Samenvatting}{Abstract}}
 
-\lipsum[1-4]
+In Vlaanderen is er een rijk aanbod aan live concerten, maar de informatievoorziening stuit op een sterke versnippering. 
+Gegevens zijn gecentraliseerd rond individuele venue-websites in plaats van geïntegreerd op één platform, waardoor muziekliefhebbers 
+onnodig tijd verliezen en evenementen mislopen. Bestaande internationale diensten dekken de lokale markt onvoldoende en het ontbreken 
+van breed gedragen API's maakt efficiënte data-aggregatie complex. 
+
+Deze bachelorproef beantwoordt daarom de hoofdonderzoeksvraag: 
+\textit{Hoe kan een gepersonaliseerd e-mailnotificatiesysteem ontworpen worden dat Vlaamse concertgangers binnen 24 uur verwittigt van nieuwe concerten bij lokale venues, op basis van artiest- en locatievoorkeuren?} 
+Het doel was om de haalbaarheid hiervan aan te tonen via de ontwikkeling van een Proof of Concept (PoC) die ongestructureerde data verzamelt zonder de gebruiker bloot te stellen aan \textit{informatie-overload}.
+
+De onderzoeksmethodologie bestond uit een literatuurstudie over moderne web data-extractie, metadata-standaarden en notificatievermoeidheid. 
+Vervolgens werd een technologische shortlist gemaakt, waarna een modulaire PoC-architectuur werd ontworpen en ontwikkeld. 
+
+Uit de bevindingen blijkt dat traditioneel scrapen op het moderne web vaak faalt door dynamische content en anti-bot mechanismen. 
+Daarom werd een robuust systeem ontwikkeld (FastAPI, Celery, SQLAlchemy) dat met een interne scraper en \textit{content hashing} wijzigingen uiterst efficiënt detecteert. 
+Deze extractie gebeurt met strikte inachtneming van ethische conventies zoals de AVG en \texttt{robots.txt}. Om de gebruiker te beschermen tegen \textit{notificatie-overload}, filtert een \textit{matcher} 
+deze data op basis van gebruikersvoorkeuren en bundelt de resultaten in maximaal één dagelijkse e-mail.
+
+De conclusie is dat het technisch en architecturaal haalbaar is om de versplinterde Vlaamse concertmarkt via ethisch verantwoorde webscraping te centraliseren in één tijdig, gepersonaliseerd systeem. 
+De modulaire integratie scheidt de veranderingsdetectie succesvol van de datavoorziening, wat het systeem uiterst schaalbaar maakt voor toekomstige uitbreidingen naar extra concertzalen. 
+Toekomstig onderzoek kan zich richten op het uitbreiden van het gebruikersmodel met diepere contextuele factoren, zoals genre-voorkeuren en reisafstand, om zo nog relevantere concertaanbevelingen te genereren.
