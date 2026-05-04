@@ -5,14 +5,30 @@
 \chapter{Conclusie}%
 \label{ch:conclusie}
 
-% TODO: Trek een duidelijke conclusie, in de vorm van een antwoord op de
-% onderzoeksvra(a)g(en). Wat was jouw bijdrage aan het onderzoeksdomein en
-% hoe biedt dit meerwaarde aan het vakgebied/doelgroep? 
-% Reflecteer kritisch over het resultaat. In Engelse teksten wordt deze sectie
-% ``Discussion'' genoemd. Had je deze uitkomst verwacht? Zijn er zaken die nog
-% niet duidelijk zijn?
-% Heeft het onderzoek geleid tot nieuwe vragen die uitnodigen tot verder 
-%onderzoek?
+Uit dit onderzoek blijkt dat het succesvol ontwikkelen van een gepersonaliseerd e-mailnotificatiesysteem voor de Vlaamse concertmarkt een architectuur vereist die zowel de vluchtigheid van online eventdata oplost als de eindgebruiker beschermt tegen informatie-overload. 
+Omdat traditionele platformen, zoals Bandsintown of algemene sociale media-algoritmes, vaak tekortschieten in verfijnde lokale dekking en omdat uniforme API's in deze niche ontbreken, vormt geautoriseerde en geavanceerde webscraping het meest betrouwbare technische fundament om deze informatieversnippering aan te pakken.
 
-\lipsum[76-80]
+Bij de integratie van deze extractie op het moderne web is eveneens gebleken dat de traditionele technieken niet meer volstaan. 
+De huidige verschuiving naar dynamische webpagina's (Client-Side Rendering) en het toenemende gebruik van anti-bot mechanismen eisen een schaalbare en gesimuleerde scraping-aanpak. 
+In combinatie met een strikte naleving van juridische kaders—waaronder de dataminimalisatie en het legitieme belang uit de AVG, 
+alsook het respecteren van \texttt{robots.txt} kan zodoende een verantwoord en effectief datamodel worden opgebouwd.
+
+Daarnaast is uit onderzoek inzake notificatievermoeidheid gebleken dat de vorm en timing van communicatie cruciaal zijn. 
+Een systeem dat onmiddellijk en frequent ongefilterde notificaties stuurt, leidt al snel tot irritatie en app-verwijdering. 
+Daarom is in het ontwerp gekozen voor een \textit{matcher} die niet enkel kijkt naar locatie en artiest, 
+maar de relevante wijzigingen bundelt conform een maximaal 24-uurs interval, om zodoende de informatie-overload tot een minimum te beperken. 
+Om al deze data uniform te structureren, is succesvol gebruikgemaakt van bestaande concepten uit concert-ontologieën \autocite{Graves2003}, 
+waardoor een robuust datamodel kon worden gedefinieerd.
+
+Wat betreft het technische oplossingsdomein is er een modulaire serverarchitectuur (Proof of Concept) ontworpen. 
+Deze architectuur scheidt de asynchrone verwerking van gedetecteerde wijzigingen (Celery) van de database-interactie (SQLAlchemy) en de API-logica (FastAPI). 
+Door het gebruik van efficiënte \textit{content hashing} in de datamodellen kan het systeem snel achterhalen of ingeladen concertdata nieuw is of aangepast, zonder onnodige databasebelasting. 
+Deze modulaire aanpak beantwoordt tevens de deelvraag rondom schaalbaarheid: nieuwe venues kunnen via een generiek configuratiemodel worden toegevoegd zonder de kernlogica te wijzigen.
+
+\section*{Kritische reflectie en toekomstig onderzoek}
+
+Doordat de PoC-fase momenteel (technisch) ontworpen en geïmplementeerd is, bewijst het reeds de architecturale en theoretische haalbaarheid van het concept. Het in stand houden van een betrouwbaar scraping-algoritme over verschillende venues heen is een uitdaging die op semantisch vlak is opgelost. 
+Voor toekomstig onderzoek liggen er verdere mogelijkheden in het uitbreiden van het gebruikersmodel. Momenteel focust het ontwerp zich op expliciete voorkeuren voor artiesten en venues. Zoals in de literatuur wordt gesuggereerd door \textcite{Zangerle2018}, 
+kan de nauwkeurigheid en relevantie nog meer verhoogd worden door diepere contextuele factoren (zoals muzikale genre-voorkeuren in verhouding tot reisafstand) op te nemen in de \textit{matcher}, om zo concertsuggesties aan te bieden die nóg dichter bij het ideale gebruikersprofiel liggen.
+
 
