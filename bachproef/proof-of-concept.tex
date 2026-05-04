@@ -112,6 +112,10 @@ class VenueScraperConfig(BaseModel):
     performer_strategy: PerformerStrategy   # Instructies voor het extraheren van performer-informatie
 \end{lstlisting}
 
+\subsection{Omzeilen van Barrières}
+
+PLACEHOLDER: Browserforge etc..
+
 \section{Change Detection logica}
 
 De kern van de \textit{change detection} logica bevindt zich in een asynchrone Celery-taak die de gescrapete data vergelijkt met de huidige staat in de database . 
@@ -132,15 +136,109 @@ Het systeem is modulair opgezet, het bestaat uit 4 delen die samen een volwaardi
 
 \begin{itemize}
     \item \textbf{Trigger}: In de Celery-taak die de change detection uitvoert, wordt de notificatie-queue aangeroepen.
-                            Dit gebeurt in Listing~\ref{Change Detection} in de regels waar \texttt{queue\_notifications\_for\_concert} wordt aangeroepen, wat zowel bij updates als bij nieuwe concerten is.
+                            Dit gebeurt in \texttt{process\_scraped\_items} (Listing~\ref{Change Detection}) in de regels waar \texttt{queue\_notifications\_for\_concert} wordt aangeroepen, wat zowel bij updates als bij nieuwe concerten is.
     \item \textbf{Matcher}: De matcher is verantwoordelijk voor het toevoegen van notificaties aan de queue op basis van de gebruikersvoorkeuren. 
                             Deze functie \texttt{queue\_notifications\_for\_concert} (Listing~\ref{Notification Queueing}) controleert of er een gebruikersvoorkeur matcht met de venue of artiest van het concert.
                             Indien dit zo is, wordt er gekeken of er al een notificatie hiervoor bestaat, als dat niet het geval is wordt er een nieuwe notificatie toegevoegd aan de queue. 
     \item \textbf{Queue}: De notificatiequeue is in deze PoC geïmplementeerd als een database-tabel waarin de notificaties worden opgeslagen met een status aangezien deze gebundeld worden. Het gebruikte model voor deze queue staat in Listing~\ref{Notification Queue Model}.
                           De Celery-worker die verantwoordelijk is voor het versturen van notificaties, haalt de items uit deze queue en verwerkt ze.
-    \item \textbf{Mailer}: De mailer is verantwoordelijk voor het versturen van de notificaties.
-
+    \item \textbf{Mailer}: De mailer is verantwoordelijk voor het dagelijks versturen van de notificaties. Dit is geïmplementeerd als een Celery-task (Listing~\ref{Daily Digest Processor}) die elke 24 uur gepland wordt om alle nodige notificaties te versturen via de helper functie \texttt{send\_daily\_digest\_email} (Listing~\ref{Daily Digest Mailer}).
+                            De Celery-task zorgt ervoor dat de notificaties worden gebundeld per gebruiker en dat de status van de notificaties in de queue correct wordt bijgewerkt na verzending. De helper functie is verantwoordelijk voor het opstellen en versturen van de e-mail, deze zorgt zowel voor een plain text als een HTML-versie van de e-mail zodat deze altijd kan worden weergegeven ondanks het gebruik van andere e-mailclients.
 \end{itemize}
 
 \section{API-implementatie en Beveiliging}
+
+De API is asynchroon opgezet met FastAPI, zodat de server responsief blijft en deze ook de scraper en Celery-taken gelijktijdig op de achtergrond kunnen draaien, zonder de gebruikerservaring te beïnvloeden.
+
+\subsection{Modulaire Endpoints}
+
+Elke entiteit heeft zijn eigen set van endpoints voor CRUD-operaties in de /api/endpoints folder. Deze isolering houdt de codebase overzichtelijk en onderhoudbaar, het scheidt de verschillende domeinen en maakt het eenvoudiger om eventuele uitbreidingen of wijzigingen door te voeren.
+De uiteindelijke samenhang van deze endpoints wordt gevormd in de /api folder, waar de router als volgt wordt ingesteld:
+
+\begin{lstlisting}[language=Python,label={API Router},caption={Voorbeeld van het samenstellen van de API-router in FastAPI.}]
+    api_router = APIRouter()
+
+    api_router.include_router(venues.router, prefix="/venues", tags=["venues"])
+    api_router.include_router(concerts.router, prefix="/concerts", tags=["concerts"])
+    api_router.include_router(performers.router, prefix="/performers", tags=["performers"])
+    api_router.include_router(users.router, prefix="/users", tags=["users"])
+    api_router.include_router(subscriptions.router, prefix="/subscriptions", tags=["subscriptions"])
+\end{lstlisting}
+
+Overigens wordt in main.py de router toegevoegd aan de FastAPI-applicatie, waardoor deze beschikbaar wordt voor communicatie met de frontend:
+
+\begin{lstlisting}[language=Python,label={FastAPI Integratie App},caption={Voorbeeld van het instellen van de FastAPI-applicatie.}]
+    from fastapi import FastAPI
+
+    app = FastAPI(title="Concert Monitor API")
+
+    # Include all endpoints
+    app.include_router(api_router, prefix="/api/v1")
+\end{lstlisting}
+
+\subsection{Validatie}
+
+Elk API-endpoint maakt gebruik van Pydantic-schema's voor datavalidatie en type-veiligheid. Deze schema's bevatten validatie voor elk veld, zoals het controleren van datums, e-mailformaten en verplichte velden. 
+Zoals hieronder zichtbaar wordt de data telkens in de schema's gevalideerd voordat deze wordt verwerkt, waardoor de integriteit van de data wordt gewaarborgd en fouten vroegtijdig worden opgevangen.
+
+\begin{lstlisting}[language=Python,label={API Endpoint Validatie},caption={Voorbeeld van een API-endpoint met Pydantic-validatie.}]
+def get_active_concerts(db: Session, skip: int = 0, limit: int = 100, search: str = None):
+    """
+    Retrieve concerts where date >= now() AND status == 'active'.
+    Includes venue and performers using joinedload.
+    """
+    query = select(Concert).options(joinedload(Concert.venue), joinedload(Concert.performers))
+    
+    filters = [
+        Concert.date >= datetime.now(),
+        Concert.status == "active"
+    ]
+    
+    if search:
+        # Search in title or venue name
+        query = query.join(Concert.venue)
+        filters.append(
+            sa.or_(
+                Concert.title.ilike(f"%{search}%"),
+                Venue.name.ilike(f"%{search}%")
+            )
+        )
+        
+    return db.execute(
+        query.where(and_(*filters))
+        .offset(skip)
+        .limit(limit)
+    ).scalars().unique().all()
+\end{lstlisting}
+
+Overigens wordt er ook gebruik gemaakt van de functie \texttt{get\_db} in de API-endpoints, 
+deze dependency injection waarborgt het lifecycle-beheer van de database-sessies.
+
+\begin{lstlisting}[language=Python,label={Database Dependency Injection},caption={Voorbeeld van database dependency injection in FastAPI.}]
+    def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+\end{lstlisting}
+
+\subsection{Beveiliging}
+
+Secrets zoals database SMTP credentials worden beheerd via omgevingsvariabelen en geladen met behulp van de Python-dotenv bibliotheek. 
+Deze aanpak voorkomt dat gevoelige informatie in de codebase terechtkomt en maakt het gemakkelijker om verschillende configuraties te beheren voor ontwikkel-, test- en productieomgevingen.
+
+Verder wordt er een strikt gecontroleerd welke domeinen toegang hebben tot de API, door middel van de CORS-middleware in FastAPI.
+
+\begin{lstlisting}[language=Python,label={CORS Middleware},caption={Voorbeeld van het instellen van CORS-middleware in FastAPI.}]
+    from fastapi.middleware.cors import CORSMiddleware
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],    # Dit hoort de toegestane domeinen te bevatten in een productieomgeving
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+\end{lstlisting}
 
