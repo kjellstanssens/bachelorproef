@@ -1,18 +1,61 @@
 \chapter{\IfLanguageName{dutch}{Shortlist}{Short List}}%
 \label{ch:shortlist}
 
-In dit hoofdstuk wordt het selectieproces van de gebruikte technologieën besproken.
-Een juiste selectie van technologieën is cruciaal voor het succes van dit project, 
+In dit hoofdstuk wordt het selectieproces van de gebruikte technologieën in \ref{ch:proof-of-concept} besproken.
+Een juiste selectie van technologieën is cruciaal voor het succes van dit prototype, 
 aangezien er voldoende technische barrières zijn zoals besproken in hoofdstuk \ref{ch:stand-van-zaken}.
 
-\section{Plan van aanpak}
-\begin{enumerate}
-    \item \textbf{Identificatie:} Bepaal de potientiële technologieën die relevant zijn voor het onderzoek.
-    \item \textbf{Criteria-bepaling:} De tools worden vergeleken op basis van volgende criteria, door een literatuurstudie:
-    \begin{itemize}
-        \item Efficiëntie in het omzeilen van \textit{browser fingerprinting}.
-        \item Ondersteuning voor asynchrone \textit{Client-Side Rendering}.
-        \item Schaalbaarheid en geheugengebruik bij continue monitoring.
-    \end{itemize}
-    \item \textbf{Definitieve selectie:} Onderbouwde keuze van de technologieën die in hoofdstuk \ref{ch:proof-of-concept} worden gebruikt.
-\end{enumerate}
+\section{Server}
+
+\subsection{Communicatie}
+
+Om de communicatie tussen de server en client mogelijk te maken is er gekozen voor een FastAPI \autocite{FastAPI} backend. Het is een modern, high-performance web framework voor het bouwen van API's met Python gebaseerd op Starlette.
+Het vermindert boilerplate code zoals validatie, documentatie, serializatie en versnelt de ontwikkeling van API's 200-300\%, ook houdt het hierdoor de code leesbaar en onderhoudbaar.
+
+Voor het gebruik van FastAPI zijn ook volgende technologieën nodig:
+\begin{itemize}
+    \item \textbf{Uvicorn} \autocite{Uvicorn}: Een snelle ASGI-server die gebruikt wordt om de FastAPI-applicatie te draaien.
+    \item \textbf{Pydantic} \autocite{Pydantic}: Een datavalidatie bibliotheek die gebruikt wordt voor het definiëren van datamodellen in FastAPI. Email-validator wordt ook gebruikt als dependency van Pydantic voor het valideren van e-mailadressen.
+    \item \textbf{Python-dotenv} \autocite{PythonDotenv}: Een bibliotheek die gebruikt wordt om omgevingsvariabelen te laden vanuit een .env-bestand, wat handig is voor het beheren van configuratie-instellingen zoals API-sleutels en database-URL's.
+\end{itemize}
+
+\subsection{Data-integriteit}
+
+Om de integriteit van de verzamelde data te waarborgen is PostgreSQL \autocite{PostgreSQL} gekozen als relationele database. PostgreSQL is een krachtig, open-source relational database systeem dat bekend staat om zijn betrouwbaarheid, schaalbaarheid, uitgebreide functieset en performantie. 
+Het ondersteunt geavanceerde datatypes, complexe query's en biedt robuuste mechanismen voor gegevensintegriteit, zoals transacties en constraints.
+
+Als Object-Relational Mapping (ORM) tool is SQLAlchemy \autocite{SQLAlchemy} gebruikt, wat een reputabele toolkit is voor het werken met relationele databases. 
+SQLAlchemy maakt het mogelijk om database-interacties te schrijven in Python code, waardoor het eenvoudiger wordt om database-operaties uit te voeren zonder direct SQL te hoeven schrijven. 
+Het ondersteunt ook verschillende databasesystemen, waaronder PostgreSQL, en biedt krachtige functies zoals query-building, schema-migraties en transactiebeheer.
+
+En voor het beheren van database-migraties tijdens de ontwikkeling is Alembic \autocite{Alembic} gebruikt, een database-migratietool die ontworpen is voor gebruik met SQLAlchemy. 
+Alembic maakt het mogelijk om database-schema's te beheren en migreren terwijl de applicatie evolueert, waardoor het eenvoudiger wordt om wijzigingen in de databasemodellen door te voeren zonder gegevensverlies. 
+Dit waarbogt de schaalbaarheid en onderhoudbaarheid van de applicatie op lange termijn.
+
+\subsection{Data-extractie}
+
+Zoals besproken in de literatuurstudie, dwingen defensieve mechanismen zoals \textit{browser fingerprinting} en asynchrone \textit{Client-Side Rendering} de noodzaak af van geavanceerde webscraping-technieken.
+
+Daarom werd voor de data-extractie voor Scrapling \autocite{Scrapling} gekozen, een geavanceerde webscraping-tool die specifiek is ontworpen om deze uitdagingen aan te pakken. 
+Scrapling is een zeer modern framework dat slechts sinds oktober 2024 bestaat en maakt gebruik van headless browsers, fingerprint spoofing en geavanceerde technieken om dynamische content te renderen en te extraheren, waardoor het effectief is in het omzeilen van \textit{browser fingerprinting} en het omgaan met asynchrone \textit{Client-Side Rendering}. 
+Het bevat ook integraties zoals "Element Tracking", deze feature kan elementen terugvinden nadat de structuur van de website is veranderd aan de hand van algoritmen, wat essentieel is voor het verzamelen van gegevens uit heterogene bronnen zoals concertzalenwebsites. 
+Dit framework is zo uitgebreid dat het ook "Robots.txt" Compliance" ondersteunt, wat ervoor zorgt dat je met een simpele flag de ethische richtlijnen van websites kunt respecteren tijdens het scrapen.
+
+\subsection{Achtergrondverwerking}
+
+Om de strikte tijdslimieten te halen en de efficiëntie te verhogen, is er gebruikt gemaakt van Celery \autocite{Celery}, een gedistribueerde taskqueue die asynchrone taakverwerking mogelijk maakt. 
+Celery stelt ons in staat om taken zoals webscraping, data-analyse en het versturen van de notificaties op de achtergrond uit te voeren, waardoor de venues gescraped kunnen worden zelfs indien er een taak faalt. 
+Celery ondersteunt ook schaalbaarheid, waardoor het mogelijk is om meerdere werkers toe te voegen om de verwerking van taken te versnellen naarmate de hoeveelheid data toeneemt.
+
+Overigens wordt Redis \autocite{Redis} gebruikt als message broker voor Celery, vanwege zijn hoge prestaties en eenvoudige integratie. 
+Redis fungeert als een tussenlaag die taken in de wachtrij plaatst en werkers in staat stelt om deze taken op te halen en uit te voeren. 
+Het gebruik van Redis met Celery is stabiel en efficiënt, waardoor het een uitstekende keuze is voor het beheren van de taakverwerking in de proof-of-concept.
+
+Verder is Flower \autocite{Flower} gebruikt als monitoring tool voor Celery, waarmee we de status van de taken kunnen volgen, prestaties kunnen analyseren en eventuele fouten kunnen identificeren. 
+Flower biedt een webinterface die real-time inzicht geeft in de taakverwerking, waardoor het gemakkelijker wordt om problemen op te sporen en de efficiëntie van de achtergrondverwerking te optimaliseren.
+
+\subsection{Testen} 
+Voor het testen van de backend is er gekozen voor Pytest \autocite{Pytest}, een krachtig en flexibel testing framework voor Python. 
+Pytest maakt het eenvoudig om tests te schrijven en uit te voeren, en biedt uitgebreide functionaliteit zoals fixtures, parametrisatie en ondersteuning voor verschillende teststijlen. 
+Het stelt ons in staat om unit tests, integratietests en end-to-end tests te schrijven om de functionaliteit en betrouwbaarheid van de backend te waarborgen. 
+Ook is hierbij gebruik gemaakt van httpx \autocite{HTTPX} als HTTP-client voor het testen van de API-endpoints, waardoor we realistische tests kunnen uitvoeren die de interactie tussen de client en server simuleren.
