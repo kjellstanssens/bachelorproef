@@ -1,0 +1,132 @@
+\chapter{Bijlage}
+\label{ch:bijlage}
+
+\begin{lstlisting}[language=Python,label={Change Detection},caption={Voorbeeld van een Celery taak voor het verwerken van gescrapete items en het detecteren van veranderingen.}]
+@celery_app.task(name="app.services.concert.process_scraped_items")
+def process_scraped_items(venue_id: int, items: list):
+    """
+    Celery task to process a list of scraped items for a specific venue.
+    """
+    db = SessionLocal()
+    try:
+        new_count = 0
+        updated_count = 0
+        now = datetime.now()
+
+        for item in items:
+            # Convert ISO string date back to datetime if needed
+            item_date = item["date"]
+            if isinstance(item_date, str):
+                item_date = datetime.fromisoformat(item_date)
+
+            # Check if exists
+            db_concert = get_concert_by_url(db, item["url"])
+            
+            if db_concert:
+                # Potential update
+                if db_concert.content_hash != item["content_hash"]:
+                    # Resolve performers from title
+                    performers = resolve_performers_from_title(db, item["title"])
+                    db_concert.performers = performers
+
+                    db_concert.title = item["title"]
+                    db_concert.date = item_date
+                    db_concert.image_url = item.get("image_url")
+                    db_concert.price = item.get("price")
+                    db_concert.content_hash = item["content_hash"]
+                    db_concert.status = "active"
+                    db_concert.last_scraped_at = now
+                    updated_count += 1
+                    db.flush() # Ensure ID is available
+                    queue_notifications_for_concert(db, db_concert.id, "updated")
+                else:
+                    # Just update the timestamp
+                    db_concert.last_scraped_at = now
+            else:
+                # Create new
+                # Resolve performers from title
+                performers = resolve_performers_from_title(db, item["title"])
+
+                new_concert = Concert(
+                    title=item["title"],
+                    url=item["url"],
+                    image_url=item.get("image_url"),
+                    price=item.get("price"),
+                    date=item_date,
+                    venue_id=venue_id,
+                    content_hash=item["content_hash"],
+                    status="active",
+                    last_scraped_at=now
+                )
+                new_concert.performers = performers # Link performers
+                db.add(new_concert)
+                db.flush() # Get ID
+                queue_notifications_for_concert(db, new_concert.id, "new")
+                new_count += 1
+        
+        db.commit()
+        # Mark missing ones as cancelled
+        mark_venue_concerts_removed(db, venue_id, now)
+        
+        return {
+            "venue_id": venue_id,
+            "new": new_count,
+            "updated": updated_count,
+            "processed_at": now.isoformat()
+        }
+    finally:
+        db.close()
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python,label={Notification Queueing},caption={Voorbeeld van een functie voor het queueen van notificaties voor een concert.}]
+    def queue_notifications_for_concert(db: Session, concert_id: int, notification_type: str):
+    """
+    Finds all users who should be notified for this concert and queues a notification.
+    Uses the Subscription model's encapsulated logic.
+    """
+    concert = db.execute(
+        select(Concert).where(Concert.id == concert_id)
+    ).scalar_one_or_none()
+    
+    if not concert:
+        return
+
+    # Call the encapsulated matching logic using the new property
+    user_ids = Subscription.find_matching_users(db, concert.venue_id, concert.performer_ids)
+    
+    for u_id in user_ids:
+        # Check if already in queue for this concert (avoid duplicates in same 24h batch)
+        existing = db.execute(
+            select(NotificationQueue).where(
+                NotificationQueue.user_id == u_id,
+                NotificationQueue.concert_id == concert_id,
+                NotificationQueue.sent_at == None
+            )
+        ).first()
+        
+        if not existing:
+            new_notif = NotificationQueue(
+                user_id=u_id,
+                concert_id=concert_id,
+                change_type=notification_type
+            )
+            db.add(new_notif)
+    
+    db.commit()
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python,label={Notification Queue Model},caption={Voorbeeld van een SQLAlchemy model voor de notificatie wachtrij.}]
+    class NotificationQueue(Base):
+    __tablename__ = "notification_queue"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    concert_id = Column(Integer, ForeignKey("concerts.id"), nullable=False)
+    change_type = Column(String, nullable=False)  # "new" or "updated"
+    created_at = Column(DateTime, default=datetime.utcnow)
+    sent_at = Column(DateTime, nullable=True)
+
+    # Relationships
+    user = relationship("User", back_populates="pending_notifications")
+    concert = relationship("Concert")
+\end{lstlisting}

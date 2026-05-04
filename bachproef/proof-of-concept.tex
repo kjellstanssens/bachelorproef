@@ -1,2 +1,146 @@
 \chapter{\IfLanguageName{dutch}{Proof of concept}{Proof of concept}}%
 \label{ch:proof-of-concept}
+
+In dit hoofdstuk wordt de praktische uitwerking van de bachelorproef gepresenteerd als een Proof of Concept (PoC). 
+Waar de voorgaande hoofdstukken dit onderwerp theoretisch kaderen, richt dit hoofdstuk zich op de technische implementatie.
+
+Deze PoC dient als een prototype dat de technische haalbaarheid van een geautomatiseerd, schaalbaar notificatiesysteem voor de Vlaamse concertmarkt bewijst.
+Hierbij staat de generieke aanpak centraal, de scraping-logica moet toepasbaar zijn voor de verschillende HTML-structuren van de venue pagina's zodat de notificaties vanuit één punt beheerbaar zijn.
+
+\section{Architectuuroverzicht}
+
+Om tot een robuust en schaalbaar systeem te komen, is de server architectuur modulair opgebouwd, waarbij de verschillende processen zoals data-extractie, change detection, notificaties en API-implementatie onafhankelijk opereren.
+Deze aanpak is cruciaal om de detectiesnelheid, betrouwbaarheid en schaalbaarheid van het systeem te waarborgen.
+
+De modulariteit van de server is duidelijk afgebakend door de mappenstructuur:
+
+\begin{itemize}
+    \item \textbf{app/api}: Bevat de REST-endpoints (FastAPI) voor het beheren van concerten, venues, performers en gebruikersvoorkeuren. Dit is de interface waarmee de frontend communiceert.
+    \item \textbf{app/core}: Bevat de kernconfiguratie van de applicatie, inclusief de databaseverbinding (SQLAlchemy), globale instellingen en de configuratie voor Celery zodat de achtergrondtaken correct worden uitgevoerd.
+    \item \textbf{app/models}: Definieert de database-tabellen en hun onderlinge relaties.
+    \item \textbf{app/schemas}: Bevat de Pydantic-modellen voor datavalidatie en conversie (JSON) bij API-verzoeken.
+    \item \textbf{app/services}: Bevat de business logica van de applicatie, zoals de \textit{matcher} (die concerten koppelt aan gebruikersvoorkeuren) en de \textit{mailer} voor het versturen van e-mailnotificaties.
+    \item \textbf{scraper/}: Bevat de gespecialiseerde scraping-engine. Het maakt gebruik van een generiek model om data van verschillende venue-websites te extraheren, te valideren en klaar te zetten voor verwerking.
+    \item \textbf{tests/}: Bevat testen waarmee de functionaliteit van de applicatie wordt gewaarborgd en regressies worden voorkomen.
+\end{itemize}
+
+\section{Datamodellen en Validatie}
+
+De datamodellen dienen als een uniform bruikbaar formaat, zodat alle verscheidene HTML-structuren consistent kunnen worden verwerkt.
+De transformatie van ongestructureerde HTML-data naar gestructureerde datamodellen is een cruciale stap in het proces en bestaat uit volgende fasen:
+
+\subsection{Database Modellen (SQLAlchemy)}
+
+PLACEHOLDER: Tekst
+
+\begin{lstlisting}[language=Python,label={Concert Model},caption={Voorbeeld van een SQLAlchemy datamodel voor een concert.}]
+def utcnow():
+    return datetime.now(UTC).replace(tzinfo=None)
+
+class Concert(Base):
+    __tablename__ = "concerts"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    date = Column(DateTime, nullable=False) # Afgeleid van Graves (2003): startTime
+    price = Column(Float, nullable=True) # Afgeleid van Graves (2003): ticketPrice
+    image_url = Column(String, nullable=True)
+    url = Column(String, index=True, nullable=True) 
+    venue_id = Column(Integer, ForeignKey("venues.id"), nullable=False) # Afgeleid van Graves (2003): Venue
+
+    content_hash = Column(String, index=True, nullable=True)
+    status = Column(String, default="active", nullable=False)
+    last_scraped_at = Column(DateTime, default=utcnow, onupdate=utcnow)
+
+    venue = relationship("Venue", back_populates="concerts")
+    performers = relationship("Performer", secondary=concert_performers, back_populates="concerts") # Afgeleid van Graves (2003): Performer
+
+    performer_ids = association_proxy("performers", "id")
+\end{lstlisting}
+
+\subsection{Datavalidatie en Schema's (Pydantic)}
+
+Naast de database-modellen wordt Pydantic gebruikt voor datavalidatie en conversie bij API-verzoeken. 
+De schema's bevatten de juiste regels om de integriteit van de data te bewaken tijdens de omzetting naar objecten. 
+Dit is essentieel om ervoor te zorgen dat corrupte data de processen niet verstoren en dat de data consistent blijft tijdens de verwerking.
+
+\begin{lstlisting}[language=Python,label={Concert Schema},caption={Voorbeeld van een Pydantic schema voor een concert.}]
+class ConcertBase(BaseModel):
+    title: str
+    date: datetime
+    price: Optional[float] = None
+    image_url: Optional[str] = None
+    url: Optional[str] = None
+    content_hash: Optional[str] = None
+    status: str = "active"
+    last_scraped_at: Optional[datetime] = None
+
+class Concert(ConcertBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+    venue_id: int
+    venue: Venue
+    performers: List[Performer] = []
+
+    model_config = ConfigDict(from_attributes=True)
+\end{lstlisting}
+
+\section{Extractie-mechanisme}
+
+Om de architecturale schaalbaarheid te waarborgen, is er een configuratie-gestuurde aanpak gebruikt voor het extraheren van data van de verschillende venue-websites.
+Zo kan de scraping-logica uniform worden toegepast op de verschillende HTML-structuren van de venue pagina's, origineel was dit met een .yaml configuratie, 
+maar om de gebruiksvriendelijkheid te verhogen is dit verplaatst naar een eigenschap in de databank. Hierdoor is het mogelijk om met een simpel admin dashboard venues toe te voegen en te beheren zonder dat er code/configuratie manueel aangepast moet worden.
+
+De extractie-logica bestaat hierdoor uit 2 delen:
+
+\subsection{Scraper Engine}
+
+De kern van de extractie vindt plaats in de scraper engine, die gebruik maakt van de Scrapling bibliotheek.
+
+PLACEHOLDER: code snippets of scraper engine
+
+\subsection{Scraping configuratie}
+
+Elke scraper configuratie bevat subschema's die instructies bevatten over hoe de data van die specifieke venue moet worden geëxtraheerd.
+
+\begin{lstlisting}[language=Python,label={Venue Scraper Configuratie},caption={Voorbeeld van een scraper configuratieschema voor een venue.}]
+class VenueScraperConfig(BaseModel):
+    venue_name: str 
+    start_url: HttpUrl                      # Base URL van de venue website
+    selectors: SelectorConfig               # CSS-selectors voor het extraheren van concertgegevens
+    date_parsing: DateParsingConfig         # Instructies voor het parsen van datums
+    performer_strategy: PerformerStrategy   # Instructies voor het extraheren van performer-informatie
+\end{lstlisting}
+
+\section{Change Detection logica}
+
+De kern van de \textit{change detection} logica bevindt zich in een asynchrone Celery-taak die de gescrapete data vergelijkt met de huidige staat in de database . 
+Door gebruik te maken van een \textit{content hash} kan het systeem efficiënt bepalen of de informatie van een concert gewijzigd is, zonder dat elke kolom manueel vergeleken moet worden. 
+Voor een gedetailleerd overzicht van de implementatie van deze logica wordt verwezen naar de \nameref{ch:bijlage} (zie Listing~\ref{Change Detection} op bladzijde~\pageref{Change Detection}).
+
+\section{Notificatiesysteem}
+
+Het notificatiesysteem in deze PoC heeft volgende eigenschappen:
+\begin{itemize}
+    \item \textbf{Notificatie-interval}: Omdat Vlaamse concerten vaak aangekondigd worden voor de ticketverkoop en deze applicatie niet ontworpen is als een ticketdistributieplatform, 
+    is er gekozen voor een notificatie-interval van 24 uur om notificatievermoeidheid te voorkomen. De notificaties worden dus gebundeld en dagelijks verstuurd, in plaats van onmiddelijk bij elke detectie.
+    \item \textbf{Medium}: In deze PoC worden de notificaties verstuurd via e-mail, echter is het systeem modulair opgezet dus is het mogelijk om efficiënt andere notificatiemedia toe te voegen.
+    \item \textbf{Inhoud}: De notificaties bevatten de naam van het concert, de datum, de venue en een link naar de originele concertpagina zodat het geïnteresseerde publiek toch naar de bronorganisatie geleid wordt. Dit is ook een bewuste keuze zodat de data van de bronorganisatie zoveel mogelijk behouden blijft en de impact op de bronorganisatie minimaal is zoals besproken in \nameref{subsec:ethiek-legaliteit}.
+\end{itemize}
+
+Het systeem is modulair opgezet, het bestaat uit 4 delen die samen een volwaardig notificatiesysteem vormen:
+
+\begin{itemize}
+    \item \textbf{Trigger}: In de Celery-taak die de change detection uitvoert, wordt de notificatie-queue aangeroepen.
+                            Dit gebeurt in Listing~\ref{Change Detection} in de regels waar \texttt{queue\_notifications\_for\_concert} wordt aangeroepen, wat zowel bij updates als bij nieuwe concerten is.
+    \item \textbf{Matcher}: De matcher is verantwoordelijk voor het toevoegen van notificaties aan de queue op basis van de gebruikersvoorkeuren. 
+                            Deze functie \texttt{queue\_notifications\_for\_concert} (Listing~\ref{Notification Queueing}) controleert of er een gebruikersvoorkeur matcht met de venue of artiest van het concert.
+                            Indien dit zo is, wordt er gekeken of er al een notificatie hiervoor bestaat, als dat niet het geval is wordt er een nieuwe notificatie toegevoegd aan de queue. 
+    \item \textbf{Queue}: De notificatiequeue is in deze PoC geïmplementeerd als een database-tabel waarin de notificaties worden opgeslagen met een status aangezien deze gebundeld worden. Het gebruikte model voor deze queue staat in Listing~\ref{Notification Queue Model}.
+                          De Celery-worker die verantwoordelijk is voor het versturen van notificaties, haalt de items uit deze queue en verwerkt ze.
+    \item \textbf{Mailer}: De mailer is verantwoordelijk voor het versturen van de notificaties.
+
+\end{itemize}
+
+\section{API-implementatie en Beveiliging}
+

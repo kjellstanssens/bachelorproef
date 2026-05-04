@@ -171,14 +171,15 @@ Een van de meest geavanceerde mechanismen is \textit{browser fingerprinting}. Di
 De laatste ontwikkelingen in scrapingsmechanismen tonen wel aan dat sommige tools in staat zijn om een volledige browser te simuleren.
 
 \subsection{Ethiek en legaliteit}
+\label{subsec:ethiek-legaliteit}
 
 Hoewel webscraping veel vooruitgang ziet, bevindt het gebruik ervan zich nog in een grijs gebied aangezien er geen specifieke wetgeving is die dit reguleert \autocite{Krotov2018}. \textcite{Krotov2018} identificeren 4 juridische kwesties waarop claims tegen webscraping gebaseerd kunnen zijn: contractbreuk via \textit{Terms of Service} (ToS), schending van auteursrechten, schending van de Computer Fraud and Abuse Act (CFAA) en de onrechtmatige daad van \textit{trespass to chattels}. Deze laatste claim wordt vooral gebruikt wanneer scraping de server overbelast.
 
-In de Europese Unie valt webscraping voornamelijk onder de Algemene Verordening Gegevensbescherming (AVG/GDPR) \autocite{Bereczki2024}. Bij het scrapen van publieke data, zoals concertinformatie, is \textit{Lawfulness of processing (Article 6(1)(f)} (vastgelegd in AVG \autocite{GDPR}) cruciaal. Dit artikel houdt in dat de verwerking van de data noodzakelijk moet zijn voor de legitieme belangen van de derde partij. In dit onderzoek is het legitieme belang het aanbieden van een gecentraliseerd notificatiesysteem en het scrapen van de publieke concertinformatie is noodzakelijk om dit aan de eindgebruikers te kunnen leveren.
+In de Europese Unie valt webscraping voornamelijk onder de Algemene Verordening Gegevensbescherming (AVG/GDPR) \autocite{Bereczki2024}. Bij het scrapen van publieke data, zoals concertinformatie, is \textit{Lawfulness of processing (Article 6(1)(f))} (vastgelegd in AVG \autocite{GDPR}) cruciaal. Dit artikel houdt in dat de verwerking van de data noodzakelijk moet zijn voor de legitieme belangen van de derde partij. In dit onderzoek is het legitieme belang het aanbieden van een gecentraliseerd notificatiesysteem en het scrapen van de publieke concertinformatie is noodzakelijk om dit aan de eindgebruikers te kunnen leveren.
 
-Naast de juridische aspecten zijn ethische overwegingen ook curciaal, zo kan een scraping-mechanisme ervoor zorgen dat de gebruiker niet bijdraagt aan het genereren van inkomsten bij de originele partij, aangezien deze bijvoorbeeld niet aan de advertenties wordt blootgesteld \autocite{Krotov2018}. Ook kan het scrape-project een concurrerende dienst zijn die de originele partij schaadt. Daarom is het van belang dat men bij implementatie van een scraping-mechanisme de impact op bronorganisaties/dataleveranciers minimaliseert.
+Naast de juridische aspecten zijn ethische overwegingen ook cruciaal, zo kan een scraping-mechanisme ervoor zorgen dat de gebruiker niet bijdraagt aan het genereren van inkomsten bij de originele partij, aangezien deze bijvoorbeeld niet aan de advertenties wordt blootgesteld \autocite{Krotov2018}. Ook kan het scrape-project een concurrerende dienst zijn die de originele partij schaadt. Daarom is het van belang dat men bij implementatie van een scraping-mechanisme de impact op bronorganisaties/dataleveranciers minimaliseert.
 
-Om dit scrape-project te realiseren met de huidige juridische en ethische normen, dienen de volgende afspraken na geleefd te worden \autocite{Bereczki2024,Lin2021}:
+Om dit scrape-project te realiseren met de huidige juridische en ethische normen, dienen de volgende afspraken nageleefd te worden \autocite{Bereczki2024,Lin2021}:
 
 \begin{itemize}
 \item \textbf{Respecteren van de wensen van de eigenaar:} Het naleven van \texttt{robots.txt} en \texttt{ai.txt}.

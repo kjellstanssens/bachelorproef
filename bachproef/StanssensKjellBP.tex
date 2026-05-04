@@ -49,6 +49,45 @@
 \usepackage{parskip}
 \setlength{\parskip}{1em}
 
+\usepackage{listings}
+\usepackage{xcolor}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{keywordcolor}{RGB}{0, 51, 179}   
+\definecolor{stringcolor}{RGB}{196, 26, 22}   
+\definecolor{commentcolor}{RGB}{0, 102, 33}    
+\definecolor{numbercolor}{RGB}{120, 120, 120}  
+\definecolor{backcolour}{RGB}{252, 252, 252}   
+\definecolor{linecolor}{RGB}{220, 220, 220}    
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{commentcolor}\itshape, 
+    keywordstyle=\color{keywordcolor}\bfseries,
+    numberstyle=\tiny\color{numbercolor},
+    stringstyle=\color{stringcolor},
+    basicstyle=\ttfamily\small\color{black},
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=12pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4,
+    frame=l,                        
+    framerule=2pt,                  
+    rulecolor=\color{linecolor},    
+    framesep=10pt,                   
+    xleftmargin=20pt                
+}
+
+\lstset{style=mystyle}
+
 %%---------- Document metadata -------------------------------------------------
 % TODO: Replace this with your own information
 \author{Kjell Stanssens}
@@ -168,6 +207,8 @@ Het onderwerp van deze bachelorproef is gebaseerd op een onderzoeksvoorstel dat 
 % TODO: Voeg hier eventuele andere bijlagen toe. Bv. als je deze BP voor de
 % tweede keer indient, een overzicht van de verbeteringen t.o.v. het origineel.
 %\input{...}
+
+\input{bijlage}
 
 %%---------- Backmatter, referentielijst ---------------------------------------
 
