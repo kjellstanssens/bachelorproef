@@ -19,14 +19,14 @@ set +x
 # Loop over all found .tex source files and compile
 for latex_file in ${source_files}; do
   echo "========== Compiling ${latex_file} =========="
+  filename=$(basename -- "${latex_file}")
+  filename_noext="${filename%.*}"
+
   set -x
-  latexmk \
-    -file-line-error \
-    -interaction=nonstopmode \
-    -output-directory="${output_dir}" \
-    -shell-escape \
-    -synctex=1 \
-    -xelatex \
-    "${latex_file}"
+  xelatex -file-line-error -interaction=nonstopmode -output-directory="${output_dir}" -shell-escape -synctex=1 "${latex_file}"
+  biber "${output_dir}/${filename_noext}"
+  makeglossaries -d "${output_dir}" "${filename_noext}"
+  xelatex -file-line-error -interaction=nonstopmode -output-directory="${output_dir}" -shell-escape -synctex=1 "${latex_file}"
+  xelatex -file-line-error -interaction=nonstopmode -output-directory="${output_dir}" -shell-escape -synctex=1 "${latex_file}"
   set +x
 done

@@ -31,7 +31,7 @@ Dit komt omdat de waarde van data voortdurend stijgt; het speelt een grote rol i
 Er is een enorme hoeveelheid data publiekelijk beschikbaar op het internet \autocite{Vording2020}, maar de vorm waarin deze toegankelijk is, vormt de grootste uitdaging. 
 Hoewel iedereen deze data kan consulteren, slaagt niet iedereen erin om deze efficiënt te verzamelen in een heterogene omgeving. In de praktijk betekent dit dat een Vlaamse concertganger handmatig websites van verscheidene zalen zoals de Ancienne Belgique (AB), Trix, de VIERNULVIER (voorheen Vooruit), enzovoort moet monitoren. 
 Elk van deze websites hanteert een eigen structuur en presentatiewijze, wat de complexiteit van handmatige monitoring verhoogt en de noodzaak voor een geautomatiseerd, overkoepelend systeem onderbouwt.
-Webscraping is volgens \textcite{Vording2020} de optimale technologie om dit probleem aan te pakken, aangezien het zowel ongestructureerde als gestructureerde data geautomatiseerd kan verzamelen en omzetten tot bruikbare formaten.
+\textit{Webscraping} is volgens \textcite{Vording2020} de optimale technologie om dit probleem aan te pakken, aangezien het zowel ongestructureerde als gestructureerde data geautomatiseerd kan verzamelen en omzetten tot bruikbare formaten.
 
 Deze transformatie is cruciaal voor het hergebruik van de data \autocite{Rutten2018}. 
 \textcite{Rutten2018} tonen aan dat data moet worden aangeboden in een formaat dat aansluit bij de behoeften van de eindgebruiker om het hergebruik ervan te optimaliseren. 
@@ -41,7 +41,7 @@ Een bijkomende complicatie is de dynamische aard van het moderne web \autocite{C
 \textcite{ChangeSurvey2019} observeren dat de meerderheid van de websites voortdurende wijzigingen ondergaat; informatie wordt toegevoegd, aangepast en verwijderd. 
 Voor gebruikers die deze data willen consumeren, is het manueel opvolgen hiervan nagenoeg onmogelijk. 
 Hiervoor is \textit{change detection} ontwikkeld en zijn er geautomatiseerde notificatiesystemen ontworpen. 
-De implementatie van deze technologieën wordt echter complexer door de evolutie van de webtechnologieën, die steeds dynamischer en resistenter tegen webscraping worden \autocite{Tseriotis2025}.
+De implementatie van deze technologieën wordt echter complexer door de evolutie van de webtechnologieën, die steeds dynamischer en resistenter tegen \textit{webscraping} worden \autocite{Tseriotis2025}.
 
 Organisaties die regelmatig grote hoeveelheden data consumeren, kunnen niet langer rekenen op menselijke tussenkomst; zij hebben nood aan geautomatiseerde systemen om dit op een rendabele manier uit te voeren \autocite{Vording2020}. 
 \textcite{Lin2021} stelt dat de minimalisatie van de menselijke factor in de scraping-workflows essentieel is voor de schaalbaarheid en efficiëntie van het systeem. 
@@ -68,14 +68,14 @@ Volgende informatie is verzameld gedurende een korte case study van het Bandsint
 \begin{itemize}
     \item \textbf{Foutieve informatie:} Ook hier heet de venue pagina van VIERNULVIER nog steeds Vooruit.
     \item \textbf{Ontbrekende informatie:} Precies zoals bij Bandsintown ontbreken er ook veel concerten bij Vlaamse venues. Ook hier worden enkel grotere concerten weergegeven, terwijl er ook veel kleinere concerten plaatsvinden die niet worden weergegeven. Lokale artiesten lijken dan ook niet op te treden, terwijl deze wel degelijk optreden in Vlaamse venues, het heeft dan ook niet veel zin dat de gebruiker zich inschrijft op deze platformen aangezien er veel relevante informatie ontbreekt.
-    \item \textbf{Ethisch dilemma:} Het platform staat vol met advertenties en verwijst naar externe ticketing platforms, dit zorgt ervoor dat de originele partij geen inkomsten genereert bij het gebruik van deze platformen ondanks dat deze de data aanbiedt. Er staat op de venue pagina's ook geen URL naar de originele website van de venue.
+    \item \textbf{Ethisch dilemma:} Het platform staat vol met advertenties en verwijst naar externe ticketing platforms, dit zorgt ervoor dat de originele partij geen inkomsten genereert bij het gebruik van deze platformen ondanks dat deze de data aanbiedt. Er staat op de venue pagina's ook geen \gls{URL} naar de originele website van de venue.
 \end{itemize}
 
 Naast de tekortkomingen in personalisatie is er een probleem met de wijze waarop eventdata technisch beschikbaar wordt gesteld \autocite{Rutten2018}. 
 Daarom moet volgens \textcite{Rutten2018} bij elke vorm van digitale collecties een overleg gebeuren met de potentiële hergebruikers van die data. 
 Deze bewering toont aan dat er niet genoeg rekening gehouden wordt met hoe externe systemen deze data moeten consumeren. 
-Hoewel Application Programming Interfaces (API's) vaak als oplossing worden beschouwd, blijkt in de praktijk vaak dat dit voor nichemarkten dit niet altijd het geval is. 
-Er is dus werkelijk geen efficiënter alternatief dan web scraping om deze grote hoeveelheden data correct te consumeren \autocite{Vording2020}. 
+Hoewel (\gls{API}'s) vaak als oplossing worden beschouwd, blijkt in de praktijk vaak dat dit voor nichemarkten dit niet altijd het geval is. 
+Er is dus werkelijk geen efficiënter alternatief dan \textit{web scraping} om deze grote hoeveelheden data correct te consumeren \autocite{Vording2020}. 
 
 Tot slot zijn veel bestaande oplossingen beperkt in de timing van hun informatielevering \autocite{NotificationSurvey2017}. 
 Uit onderzoek van \textcite{NotificationSurvey2017} wordt geconcludeerd dat notificaties, 
@@ -94,7 +94,7 @@ belangrijk om de data van verscheidene bronnen te transformeren naar één seman
 
 In het onderzoek van \textcite{Graves2003} is er een ontologie ontwikkeld om concertgegevens effectief te beschrijven in een digitale omgeving.
 Het doel van deze ontwikkelde ontologie is een verbetering bieden tegenover de bestaande versnipperde methoden door gebruik te maken van het framework:
-\textit{Resource Description Framework} (RDF) \autocite{Graves2003}.
+\gls{RDF} \autocite{Graves2003}.
 Het doel is een universeel formaat te creëren zodat de concertgegevens efficiënter leesbaar en herbruikbaar worden voor diverse applicaties.
 Op figuur \ref{fig:ontology} wordt de visuele representatie van deze ontologie weergegeven.
 
@@ -146,14 +146,14 @@ kan een intelligent systeem worden ontwikkeld dat de relevante concertinformatie
 \subsection{Van statische naar dynamische content}
 
 De methodes voor het verzamelen van webdata zijn de afgelopen decennia sterk geëvolueerd, parallel aan de evolutie van webtechnologieën \autocite{Tseriotis2025}.
-Vroeger bestonden webpagina's vooral uit statische HTML-documenten, die eenvoudig konden worden uitgelezen met traditionele webscraping-technieken.
+Vroeger bestonden webpagina's vooral uit statische HTML-documenten, die eenvoudig konden worden uitgelezen met traditionele \textit{webscraping}-technieken.
 Vandaag de dag zijn deze webpagina's geëvolueerd naar dynamische en interactieve platformen.
 \textcite{Tseriotis2025} stelt dat deze evolutie een uitdaging vormt voor data-extractie door de toenemende resistentie tegen scraping-technieken.
 
-Een belangrijk verschil in het moderne web is de verschuiving van \textit{Server-Side Rendering} (SSR) naar \textit{Client-Side Rendering} (CSR) \autocite{Tseriotis2025}.
-Bij CSR worden webpagina's vaak geïmplementeerd als \textit{Single-Page Applications} (SPA), waarbij de inhoud dynamisch wordt geladen via JavaScript na het initiële laden en zichtbaar wordt door interactie met het \textit{Document Object Model} (DOM).
-Eerst wordt er een basis HTML-pagina geladen, dit dient dan als minimaal geraamte vooraleer de inhoud via API's of andere bronnen wordt opgehaald.
-Voor webscraping betekent dit dat de traditionele technieken niet meer volstaan aangezien het downloaden van de HTML-pagina niet langer de volledige inhoud oplevert.
+Een belangrijk verschil in het moderne web is de verschuiving van \gls{SSR} naar \gls{CSR} \autocite{Tseriotis2025}.
+Bij \gls{CSR} worden webpagina's vaak geïmplementeerd als \glspl{SPA}, waarbij de inhoud dynamisch wordt geladen via JavaScript na het initiële laden en zichtbaar wordt door interactie met het \gls{DOM}.
+Eerst wordt er een basis HTML-pagina geladen, dit dient dan als minimaal geraamte vooraleer de inhoud via \gls{API}'s of andere bronnen wordt opgehaald.
+Voor \textit{webscraping} betekent dit dat de traditionele technieken niet meer volstaan aangezien het downloaden van de HTML-pagina niet langer de volledige inhoud oplevert.
 Het systeem moet nu een volledige browseromgeving simuleren om de asynchroon geladen data correct te kunnen verzamelen, dit omdat de scripts uitgevoerd moeten worden.
 
 Deze dynamische aard zorgt voor voortdurende veranderingen op het web zoals eerder vermeld \autocite{ChangeSurvey2019}.
@@ -167,15 +167,15 @@ Door de toenenemde waarde van digitale data worden er steeds meer geavanceerde d
 \textcite{Tseriotis2025} stelt dat scraping tegenwoordig geconfronteerd wordt met meerdere lagen van deze mechanismen die variëren van CAPTCHA's en IP-blokkades tot browser fingerprinting en bot detectie algoritmen.
 Deze barrières zijn er om de integriteit van de website te beschermen en om serverbelasting door bots te reguleren.
 
-Een van de meest geavanceerde mechanismen is \textit{browser fingerprinting}. Dit is een techniek waarbij de unieke kenmerken van een browser worden geanalyseerd om te bepalen of dit een legitieme gebruiker is, dit aan de hand van omgevingsvariabelen zoals browserversie, plugins, schermresolutie, tijdzone, besturingssysteem, enzovoort \autocite{Tseriotis2025}. Dit is een zeer effectieve manier om bots te detecteren, aangezien bots vaak een headless browser gebruiken die een minimale fingerprint heeft.
+Een van de meest geavanceerde mechanismen is \textit{browser fingerprinting}. Dit is een techniek waarbij de unieke kenmerken van een browser worden geanalyseerd om te bepalen of dit een legitieme gebruiker is, dit aan de hand van omgevingsvariabelen zoals browserversie, plugins, schermresolutie, tijdzone, besturingssysteem, enzovoort \autocite{Tseriotis2025}. Dit is een zeer effectieve manier om bots te detecteren, aangezien bots vaak een \textit{headless browser} gebruiken die een minimale fingerprint heeft.
 De laatste ontwikkelingen in scrapingsmechanismen tonen wel aan dat sommige tools in staat zijn om een volledige browser te simuleren.
 
 \subsection{Ethiek en legaliteit}
 \label{subsec:ethiek-legaliteit}
 
-Hoewel webscraping veel vooruitgang ziet, bevindt het gebruik ervan zich nog in een grijs gebied aangezien er geen specifieke wetgeving is die dit reguleert \autocite{Krotov2018}. \textcite{Krotov2018} identificeren 4 juridische kwesties waarop claims tegen webscraping gebaseerd kunnen zijn: contractbreuk via \textit{Terms of Service} (ToS), schending van auteursrechten, schending van de Computer Fraud and Abuse Act (CFAA) en de onrechtmatige daad van \textit{trespass to chattels}. Deze laatste claim wordt vooral gebruikt wanneer scraping de server overbelast.
+Hoewel \textit{webscraping} veel vooruitgang ziet, bevindt het gebruik ervan zich nog in een grijs gebied aangezien er geen specifieke wetgeving is die dit reguleert \autocite{Krotov2018}. \textcite{Krotov2018} identificeren 4 juridische kwesties waarop claims tegen \textit{webscraping} gebaseerd kunnen zijn: contractbreuk via \gls{ToS}, schending van auteursrechten, schending van de \gls{CFAA} en de onrechtmatige daad van \textit{trespass to chattels}. Deze laatste claim wordt vooral gebruikt wanneer scraping de server overbelast.
 
-In de Europese Unie valt webscraping voornamelijk onder de Algemene Verordening Gegevensbescherming (AVG/GDPR) \autocite{Bereczki2024}. Bij het scrapen van publieke data, zoals concertinformatie, is \textit{Lawfulness of processing (Article 6(1)(f))} (vastgelegd in AVG \autocite{GDPR}) cruciaal. Dit artikel houdt in dat de verwerking van de data noodzakelijk moet zijn voor de legitieme belangen van de derde partij. In dit onderzoek is het legitieme belang het aanbieden van een gecentraliseerd notificatiesysteem en het scrapen van de publieke concertinformatie is noodzakelijk om dit aan de eindgebruikers te kunnen leveren.
+In de Europese Unie valt \textit{webscraping} voornamelijk onder de \gls{AVG} (\gls{GDPR}) \autocite{Bereczki2024}. Bij het scrapen van publieke data, zoals concertinformatie, is \textit{Lawfulness of processing (Article 6(1)(f))} (vastgelegd in \gls{AVG} \autocite{\gls{GDPR}}) cruciaal. Dit artikel houdt in dat de verwerking van de data noodzakelijk moet zijn voor de legitieme belangen van de derde partij. In dit onderzoek is het legitieme belang het aanbieden van een gecentraliseerd notificatiesysteem en het scrapen van de publieke concertinformatie is noodzakelijk om dit aan de eindgebruikers te kunnen leveren.
 
 Naast de juridische aspecten zijn ethische overwegingen ook cruciaal, zo kan een scraping-mechanisme ervoor zorgen dat de gebruiker niet bijdraagt aan het genereren van inkomsten bij de originele partij, aangezien deze bijvoorbeeld niet aan de advertenties wordt blootgesteld \autocite{Krotov2018}. Ook kan het scrape-project een concurrerende dienst zijn die de originele partij schaadt. Daarom is het van belang dat men bij implementatie van een scraping-mechanisme de impact op bronorganisaties/dataleveranciers minimaliseert.
 

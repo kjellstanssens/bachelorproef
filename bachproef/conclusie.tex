@@ -6,11 +6,11 @@
 \label{ch:conclusie}
 
 Uit dit onderzoek blijkt dat het succesvol ontwikkelen van een gepersonaliseerd e-mailnotificatiesysteem voor de Vlaamse concertmarkt een architectuur vereist die zowel de vluchtigheid van online eventdata oplost als de eindgebruiker beschermt tegen informatie-overload. 
-Omdat traditionele platformen, zoals Bandsintown of algemene sociale media-algoritmes, vaak tekortschieten in verfijnde lokale dekking en omdat uniforme API's in deze niche ontbreken, vormt geautoriseerde en geavanceerde webscraping het meest betrouwbare technische fundament om deze informatieversnippering aan te pakken.
+Omdat traditionele platformen, zoals Bandsintown of algemene sociale media-algoritmes, vaak tekortschieten in verfijnde lokale dekking en omdat uniforme \gls{API}'s in deze niche ontbreken, vormt geautoriseerde en geavanceerde \textit{webscraping} het meest betrouwbare technische fundament om deze informatieversnippering aan te pakken.
 
 Bij de integratie van deze extractie op het moderne web is eveneens gebleken dat de traditionele technieken niet meer volstaan. 
-De huidige verschuiving naar dynamische webpagina's (Client-Side Rendering) en het toenemende gebruik van anti-bot mechanismen eisen een schaalbare en gesimuleerde scraping-aanpak. 
-In combinatie met een strikte naleving van juridische kaders—waaronder de dataminimalisatie en het legitieme belang uit de AVG, 
+De huidige verschuiving naar dynamische webpagina's (\gls{CSR}) en het toenemende gebruik van \textit{anti-bot} mechanismen eisen een schaalbare en gesimuleerde scraping-aanpak. 
+In combinatie met een strikte naleving van juridische kaders—waaronder de dataminimalisatie en het legitieme belang uit de \gls{AVG}, 
 alsook het respecteren van \texttt{robots.txt} kan zodoende een verantwoord en effectief datamodel worden opgebouwd.
 
 Daarnaast is uit onderzoek inzake notificatievermoeidheid gebleken dat de vorm en timing van communicatie cruciaal zijn. 
@@ -20,7 +20,7 @@ maar de relevante wijzigingen bundelt conform een maximaal 24-uurs interval, om 
 Om al deze data uniform te structureren, is succesvol gebruikgemaakt van bestaande concepten uit concert-ontologieën \autocite{Graves2003}, 
 waardoor een robuust datamodel kon worden gedefinieerd.
 
-Wat betreft het technische oplossingsdomein is er een modulaire serverarchitectuur (Proof of Concept) ontworpen. 
+Wat betreft het technische oplossingsdomein is er een modulaire serverarchitectuur (\gls{PoC}) ontworpen. 
 Deze architectuur scheidt de asynchrone verwerking van gedetecteerde wijzigingen (Celery) van de database-interactie (SQLAlchemy) en de API-logica (FastAPI). 
 Door het gebruik van efficiënte \textit{content hashing} in de datamodellen kan het systeem snel achterhalen of ingeladen concertdata nieuw is of aangepast, zonder onnodige databasebelasting. 
 Deze modulaire aanpak beantwoordt tevens de deelvraag rondom schaalbaarheid: nieuwe venues kunnen via een generiek configuratiemodel worden toegevoegd zonder de kernlogica te wijzigen.

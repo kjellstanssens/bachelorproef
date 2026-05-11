@@ -49,8 +49,27 @@
 \usepackage{parskip}
 \setlength{\parskip}{1em}
 
-\usepackage{listings}
-\usepackage{xcolor}
+\usepackage[toc,acronym]{glossaries}
+\makeglossaries
+
+\newacronym{AB}{AB}{Ancienne Belgique}
+\newacronym{API}{API}{Application Programming Interface}
+\newacronym{ASGI}{ASGI}{Asynchronous Server Gateway Interface}
+\newacronym{AVG}{AVG}{Algemene Verordening Gegevensbescherming}
+\newacronym{CFAA}{CFAA}{Computer Fraud and Abuse Act}
+\newacronym{CSR}{CSR}{Client-Side Rendering}
+\newacronym{DOM}{DOM}{Document Object Model}
+\newacronym{GDPR}{GDPR}{General Data Protection Regulation}
+\newacronym{JSON}{JSON}{JavaScript Object Notation}
+\newacronym{ORM}{ORM}{Object-Relational Mapping}
+\newacronym{PoC}{PoC}{Proof of Concept}
+\newacronym{RDF}{RDF}{Resource Description Framework}
+\newacronym{REST}{REST}{Representational State Transfer}
+\newacronym{SPA}{SPA}{Single-Page Application}
+\newacronym{SSR}{SSR}{Server-Side Rendering}
+\newacronym{ToS}{ToS}{Terms of Service}
+\newacronym{URL}{URL}{Uniform Resource Locator}
+\newacronym{UTC}{UTC}{Coordinated Universal Time}
 
 \usepackage{listings}
 \usepackage{xcolor}
@@ -93,7 +112,7 @@
 \author{Kjell Stanssens}
 \supervisor{Mevr. H. Roobrouck}
 \cosupervisor{Dhr. J. Claes}
-\title[Ontwerp en implementatie van een robuust webscraping-systeem]%
+\title[Ontwerp en implementatie van een robuust \textit{webscraping}-systeem]%
     {Automatische notificaties voor nieuwe concerten bij Vlaamse muziekvenues op basis van artiest- en locatievoorkeuren}
 \academicyear{\advance\year by -1 \the\year--\advance\year by 1 \the\year}
 \examperiod{1}
@@ -153,13 +172,17 @@
 
 % If you included tables and/or source code listings, uncomment the appropriate
 % lines.
-\listoftables
+% \listoftables
 
 \listoflistings
 
 % Als je een lijst van afkortingen of termen wil toevoegen, dan hoort die
 % hier thuis. Gebruik bijvoorbeeld de ``glossaries'' package.
 % https://www.overleaf.com/learn/latex/Glossaries
+
+\glsaddall
+\printglossary[title=Glossarium]
+\printglossary[type=\acronymtype, title=Lijst van afkortingen]
 
 %---------- Kern ---------------------------------------------------------------
 
@@ -216,5 +239,6 @@ Het onderwerp van deze bachelorproef is gebaseerd op een onderzoeksvoorstel dat 
 
 \setlength\bibitemsep{2pt} %% Add Some space between the bibliograpy entries
 \printbibliography[heading=bibintoc]
+
 
 \end{document}

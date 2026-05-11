@@ -9,8 +9,8 @@ aangezien er voldoende technische barrières zijn zoals besproken in hoofdstuk \
 
 \subsection{Communicatie}
 
-Om de communicatie tussen de server en client mogelijk te maken is er gekozen voor een FastAPI \autocite{FastAPI} backend. Het is een modern, high-performance web framework voor het bouwen van API's met Python gebaseerd op Starlette.
-Het vermindert boilerplate code zoals validatie, documentatie, serializatie en versnelt de ontwikkeling van API's 200-300\%, ook houdt het hierdoor de code leesbaar en onderhoudbaar.
+Om de communicatie tussen de server en client mogelijk te maken is er gekozen voor een FastAPI \autocite{FastAPI} backend. Het is een modern, high-performance web framework voor het bouwen van \gls{API}'s met Python gebaseerd op Starlette.
+Het vermindert \textit{boilerplate} code zoals validatie, documentatie, serializatie en versnelt de ontwikkeling van \gls{API}'s 200-300\%, ook houdt het hierdoor de code leesbaar en onderhoudbaar.
 
 Voor het gebruik van FastAPI zijn ook volgende technologieën nodig:
 \begin{itemize}
@@ -24,7 +24,7 @@ Voor het gebruik van FastAPI zijn ook volgende technologieën nodig:
 Om de integriteit van de verzamelde data te waarborgen is PostgreSQL \autocite{PostgreSQL} gekozen als relationele database. PostgreSQL is een krachtig, open-source relational database systeem dat bekend staat om zijn betrouwbaarheid, schaalbaarheid, uitgebreide functieset en performantie. 
 Het ondersteunt geavanceerde datatypes, complexe query's en biedt robuuste mechanismen voor gegevensintegriteit, zoals transacties en constraints.
 
-Als Object-Relational Mapping (ORM) tool is SQLAlchemy \autocite{SQLAlchemy} gebruikt, wat een reputabele toolkit is voor het werken met relationele databases. 
+Als \gls{ORM} tool is SQLAlchemy \autocite{SQLAlchemy} gebruikt, wat een reputabele toolkit is voor het werken met relationele databases. 
 SQLAlchemy maakt het mogelijk om database-interacties te schrijven in Python code, waardoor het eenvoudiger wordt om database-operaties uit te voeren zonder direct SQL te hoeven schrijven. 
 Het ondersteunt ook verschillende databasesystemen, waaronder PostgreSQL, en biedt krachtige functies zoals query-building, schema-migraties en transactiebeheer.
 
@@ -34,17 +34,17 @@ Dit waarbogt de schaalbaarheid en onderhoudbaarheid van de applicatie op lange t
 
 \subsection{Data-extractie}
 
-Zoals besproken in de literatuurstudie, dwingen defensieve mechanismen zoals \textit{browser fingerprinting} en asynchrone \textit{Client-Side Rendering} de noodzaak af van geavanceerde webscraping-technieken.
+Zoals besproken in de literatuurstudie, dwingen defensieve mechanismen zoals \textit{browser fingerprinting} en asynchrone \textit{\gls{CSR}} de noodzaak af van geavanceerde \textit{webscraping}-technieken.
 
-Daarom werd voor de data-extractie voor Scrapling \autocite{Scrapling} gekozen, een geavanceerde webscraping-tool die specifiek is ontworpen om deze uitdagingen aan te pakken. 
-Scrapling is een zeer modern framework dat slechts sinds oktober 2024 bestaat en maakt gebruik van headless browsers, fingerprint spoofing en geavanceerde technieken om dynamische content te renderen en te extraheren, waardoor het effectief is in het omzeilen van \textit{browser fingerprinting} en het omgaan met asynchrone \textit{Client-Side Rendering}. 
+Daarom werd voor de data-extractie voor Scrapling \autocite{Scrapling} gekozen, een geavanceerde \textit{webscraping}-tool die specifiek is ontworpen om deze uitdagingen aan te pakken. 
+Scrapling is een zeer modern framework dat slechts sinds oktober 2024 bestaat en maakt gebruik van \textit{headless browsers}, \textit{fingerprint spoofing} en geavanceerde technieken om dynamische content te renderen en te extraheren, waardoor het effectief is in het omzeilen van \textit{browser fingerprinting} en het omgaan met asynchrone \textit{\gls{CSR}}. 
 Het bevat ook integraties zoals "Element Tracking", deze feature kan elementen terugvinden nadat de structuur van de website is veranderd aan de hand van algoritmen, wat essentieel is voor het verzamelen van gegevens uit heterogene bronnen zoals concertzalenwebsites. 
 Dit framework is zo uitgebreid dat het ook "Robots.txt" Compliance" ondersteunt, wat ervoor zorgt dat je met een simpele flag de ethische richtlijnen van websites kunt respecteren tijdens het scrapen.
 
 \subsection{Achtergrondverwerking}
 
 Om de strikte tijdslimieten te halen en de efficiëntie te verhogen, is er gebruikt gemaakt van Celery \autocite{Celery}, een gedistribueerde taskqueue die asynchrone taakverwerking mogelijk maakt. 
-Celery stelt ons in staat om taken zoals webscraping, data-analyse en het versturen van de notificaties op de achtergrond uit te voeren, waardoor de venues gescraped kunnen worden zelfs indien er een taak faalt. 
+Celery stelt ons in staat om taken zoals \textit{webscraping}, data-analyse en het versturen van de notificaties op de achtergrond uit te voeren, waardoor de venues gescraped kunnen worden zelfs indien er een taak faalt. 
 Celery ondersteunt ook schaalbaarheid, waardoor het mogelijk is om meerdere werkers toe te voegen om de verwerking van taken te versnellen naarmate de hoeveelheid data toeneemt.
 
 Overigens wordt Redis \autocite{Redis} gebruikt als message broker voor Celery, vanwege zijn hoge prestaties en eenvoudige integratie. 
