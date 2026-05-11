@@ -26,34 +26,43 @@
 %% Maak voor elke fase (behalve het literatuuronderzoek) een NIEUW HOOFDSTUK aan
 %% en geef het een gepaste titel.
 
+In dit hoofdstuk worden de fasen van het onderzoek besproken en hoe deze met elkaar in verband staan. 
+Elke fase bevat een unieke doelstelling, deliverables en onderzoeksmethoden die samen het raamwerk vormen voor de uitvoering van dit onderzoek.
+
 Het centrale doel is het ontwerpen en ontwikkelen van een functionele \gls{PoC}; een intelligent notificatiesysteem voor versnipperde eventdata
 dat een oplossing biedt voor de problematiek van informatie-overload en technische scraping-barrières. 
-Het proces is onderverdeeld in de volgende fasen.
+
+Het onderzoek bestaat uit volgende fasen:
 
 \section{Fase 1: Literatuurstudie}
+In deze fase werd gestart met het theoretisch kaderen van het onderzoek, wat essentieel is om de relevantie van het onderwerp aan te tonen en zowel technische als conceptuele uitdagingen te begrijpen. 
+
 \begin{itemize}
-    \item \textbf{Doelstelling:} Het in kaart brengen van de \textit{state-of-the-art} betreffende metadata-standaarden, moderne webtechnologieën en de psychologie achter notificatiemoeheid.
-    \item \textbf{Deliverables:} Stand van zaken (Hoofdstuk 2 \& 3).
+    \item \textbf{Doelstelling:} Het in kaart brengen van de complexiteit van het moderne web (zoals \gls{CSR} en \gls{SSR}) alsook de juridische (\gls{AVG}) regelgeving rondom extraheren van data. Dit is essentieel om te begrijpen waarom traditionele scraping-technieken momenteel falen.
+    \item \textbf{Deliverables:} Stand van zaken (Hoofdstuk \ref{ch:stand-van-zaken}).
     \item \textbf{Onderzoeksmethode:} Literatuuronderzoek en comparatieve tekstanalyse.
 \end{itemize}
 
-\section{Fase 2: Short-list}
+\section{Fase 2: Toolselectie}
+Op basis van de knelpunten die in het literatuuronderzoek werden vastgesteld (bijvoorbeeld de noodzaak om \textit{browser fingerprinting} te omzeilen), is er in de tweede fase gericht gezocht naar geschikte technologieën. Er is besloten om eerst de tools af te wegen in plaats van blindelings aan de implementatie te beginnen.
 \begin{itemize}
-    \item \textbf{Doelstelling:} Het selecteren van de meest geschikte tools voor de \gls{PoC}.
-    \item \textbf{Deliverables:} Verantwoorde technologiekeuze in Hoofdstuk \ref{ch:shortlist}.
-    \item \textbf{Onderzoeksmethode:} Literatuuronderzoek en experimenteel onderzoek via een \textit{Proof-of-Concept}.
+    \item \textbf{Doelstelling:} Het selecteren en verantwoorden van de meest geschikte technologieën. Dit is cruciaal om een inzicht te krijgen in de technische haalbaarheid van het project te bepalen en de implementatie te optimaliseren.
+    \item \textbf{Deliverables:} Een verantwoorde technologiekeuze opgelijst in de shortlist (Hoofdstuk \ref{ch:shortlist}).
+    \item \textbf{Onderzoeksmethode:} Analytisch literatuuronderzoek van technische documentatie.
 \end{itemize}
 
 \section{Fase 3: Systeemontwerp en Implementatie}
+Na de theoretische en technologische afbakening kan overgegaan worden tot de praktische uitwerking in de vorm van een prototype. Het bouwen van een \gls{PoC} is de meest geschikte methode om technische theorieën in de praktijk te modelleren.
 \begin{itemize}
-    \item \textbf{Doelstelling:} Het optimaal ontwerpen en ontwikkelen van een functioneel prototype van een notificatiesysteem volgens de kennis vergaard in Hoofdstuk \ref{ch:stand-van-zaken} en \ref{ch:shortlist}. 
-    \item \textbf{Deliverables:} Een functionerend prototype van de applicatie (Hoofdstuk \ref{ch:proof-of-concept}).
-    \item \textbf{Onderzoeksmethode:} Applicatie-ontwikkeling.
+    \item \textbf{Doelstelling:} Het ontwerpen en ontwikkelen van een functioneel prototype. Hierbij wordt de technische haalbaarheid van het concept op de proef gesteld, en worden de theoretische inzichten uit de literatuurstudie toegepast in een concrete implementatie.
+    \item \textbf{Deliverables:} Een functionerend prototype van de server architectuur met minimale webinterfaces voor gebruikers (Hoofdstuk \ref{ch:proof-of-concept}).
+    \item \textbf{Onderzoeksmethode:} Systeemontwerp en applicatie-ontwikkeling.
 \end{itemize}
 
-\section{Fase 4: Testen en Evaluatie}
+\section{Fase 4: Teststrategie en Evaluatie}
+Om de effectiviteit van de ontwikkelde \gls{PoC} te evalueren, is er een duidelijke teststrategie geformuleerd. Omdat het systeem sterk asynchroon en afhankelijk is van externe (live) data, ligt de focus van de testen voornamelijk op integratie, accuraatheid en belastbaarheid, eerder dan op de statische code.
 \begin{itemize}
-    \item \textbf{Doelstelling:} Het valideren van het systeem op basis van detectiesnelheid, precisie, betrouwbaarheid en frequentie.
-    \item \textbf{Deliverables:} Testresultaten en kritische reflectie in Hoofdstuk \ref{ch:conclusie}.
-    \item \textbf{Onderzoeksmethode:} Systeemtesten en kwalitatieve evaluatie van de gebruikersreceptiviteit.
+    \item \textbf{Doelstelling:} Het valideren van het systeem op basis van responstijd, betrouwbaarheid en detectie-nauwkeurigheid. Ook zal de schaalbaarheid geëvalueerd worden op basis van mogelijkheid tot toevoegen van nieuwe databronnen. Hierbij zal specifiek het succespercentage (of eventueel falen) van de geselecteerde \textit{web scraping} tool worden geëvalueerd tegenover webpagina's om na te gaan of de \textit{change detection} (bijv. concert afgelast of ticketprijzen aangepast) tijdig en onopgemerkt wordt geregistreerd.
+    \item \textbf{Deliverables:} Analyse van technische metrics en de resulterende conclusie (Hoofdstuk \ref{ch:conclusie}).
+    \item \textbf{Onderzoeksmethode:} Geautomatiseerde systeemtesten op live externe platformen, aangevuld met analyse van logging en architecturale pijnpunten.
 \end{itemize}
