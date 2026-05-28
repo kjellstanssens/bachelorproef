@@ -1,9 +1,9 @@
 \chapter{\IfLanguageName{dutch}{Shortlist}{Short List}}%
 \label{ch:shortlist}
 
-In dit hoofdstuk wordt het selectieproces van de gebruikte technologieën in \ref{ch:proof-of-concept} besproken.
+In dit hoofdstuk wordt het selectieproces van de gebruikte technologieën in Hoofdstuk \ref{ch:proof-of-concept} besproken.
 Een juiste selectie van technologieën is cruciaal voor het succes van dit prototype, 
-aangezien er voldoende technische barrières zijn zoals besproken in hoofdstuk \ref{ch:stand-van-zaken}.
+aangezien er voldoende technische barrières zijn zoals besproken in Hoofdstuk \ref{ch:stand-van-zaken}.
 
 \section{Server}
 
@@ -34,12 +34,21 @@ Dit waarbogt de schaalbaarheid en onderhoudbaarheid van de applicatie op lange t
 
 \subsection{Data-extractie}
 
-Zoals besproken in de literatuurstudie, dwingen defensieve mechanismen zoals \textit{browser fingerprinting} en asynchrone \textit{\gls{CSR}} de noodzaak af van geavanceerde \textit{webscraping}-technieken.
+Zoals besproken in de literatuurstudie, dwingen defensieve mechanismen zoals \textit{browser fingerprinting} en asynchrone \gls{CSR} de noodzaak af van geavanceerde \textit{webscraping}-technieken.
+\textit{Browser fingerprinting} is een techniek waarbij websites een uniek profiel van een bezoeker opstellen op basis van specifieke browserkenmerken om te bepalen of de bezoeker wel een menselijke gebruiker is en geen geautomatiseerd script.
+Moderne \textit{anti-bot} systemen detecteren verkeer immers niet uitsluitend op basis van IP-adres, maar analyseren de unieke eigenschappen van het inkomende verzoek. 
+Dit varieert van het scannen van variabelen in de JavaScript-omgeving (om \textit{headless browsers}, browsers zonder grafische gebruikersinterface die door scripts worden aangestuurd, te ontdekken) tot het inspecteren van de netwerklaag, waarbij de TLS-vingerafdruk veelal verraadt 
+of een verzoek afkomstig is van een script in plaats van een reguliere webbrowser \autocite{Tseriotis2025}.
 
-Daarom werd voor de data-extractie voor Scrapling \autocite{Scrapling} gekozen, een geavanceerde \textit{webscraping}-tool die specifiek is ontworpen om deze uitdagingen aan te pakken. 
-Scrapling is een zeer modern framework dat slechts sinds oktober 2024 bestaat en maakt gebruik van \textit{headless browsers}, \textit{fingerprint spoofing} en geavanceerde technieken om dynamische content te renderen en te extraheren, waardoor het effectief is in het omzeilen van \textit{browser fingerprinting} en het omgaan met asynchrone \textit{\gls{CSR}}. 
-Het bevat ook integraties zoals "Element Tracking", deze feature kan elementen terugvinden nadat de structuur van de website is veranderd aan de hand van algoritmen, wat essentieel is voor het verzamelen van gegevens uit heterogene bronnen zoals concertzalenwebsites. 
-Dit framework is zo uitgebreid dat het ook "Robots.txt" Compliance" ondersteunt, wat ervoor zorgt dat je met een simpele flag de ethische richtlijnen van websites kunt respecteren tijdens het scrapen.
+Daarom is voor de data-extractie Scrapling gekozen, een framework dat rechtstreeks ingrijpt op deze detectiemechanismen \autocite{Scrapling}. 
+Scrapling is een modern framework (gelanceerd in oktober 2024) dat \textit{headless browsers} uitbreidt met \textit{fingerprint spoofing} en TLS-\textit{spoofing}. 
+Enerzijds zorgt \textit{fingerprint spoofing} ervoor dat de applicatielaag wordt gemanipuleerd. Hierbij worden de kenmerken die de website opvraagt vervalst, waardoor JavaScript-detectiescripts een veilige, geloofwaardige browseromgeving inlezen. 
+Anderzijds past het systeem TLS-\textit{spoofing} toe om de cryptografische parameters van de TLS-handshake, de digitale handdruk bij het opzetten van een beveiligde verbinding, te herschrijven. 
+Hierdoor komt de netwerkvingerafdruk van het extractie-script exact overeen met die van een menselijke bezoeker, wat het uiterst effectief maakt in het omzeilen van \textit{anti-bot} firewalls en het genereren van asynchrone \gls{CSR}.
+
+Daarnaast biedt het framework integraties zoals "Element Tracking"  \autocite{Scrapling}. Deze functionaliteit stelt de \textit{scraper} in staat om HTML-elementen terug te vinden nadat de websitestructuur onverwacht wijzigt. 
+Dit gebeurt op basis van interne optimalisatie-algoritmen en verlaagt de onderhoudslast bij heterogene bronnen, zoals verouderde concertwebsites, aanzienlijk. 
+Tot slot ondersteunt Scrapling ingebouwde "Robots.txt Compliance", zodat het systeem met behulp van een configuratievlag de fundamentele ethische webrichtlijnen kan respecteren.
 
 \subsection{Achtergrondverwerking}
 

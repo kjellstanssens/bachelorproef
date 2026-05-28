@@ -25,34 +25,56 @@
 %%
 %% Maak voor elke fase (behalve het literatuuronderzoek) een NIEUW HOOFDSTUK aan
 %% en geef het een gepaste titel.
+In dit hoofdstuk wordt de methodologische aanpak van deze bachelorproef uiteengezet. 
+Om de hoofdonderzoeksvraag te beantwoorden, is er gekozen voor een ontwerpgerichte onderzoeksmethode. 
+Het doel is het ontwerpen, implementeren en evalueren van een tastbaar prototype. 
 
-In dit hoofdstuk worden de fasen van het onderzoek besproken en hoe deze met elkaar in verband staan. 
-Elke fase bevat een unieke doelstelling, deliverables en onderzoeksmethoden die samen het raamwerk vormen voor de uitvoering van dit onderzoek.
-
-Het centrale doel is het ontwerpen en ontwikkelen van een functionele \gls{PoC}; een intelligent notificatiesysteem voor versnipperde eventdata
-dat een oplossing biedt voor de problematiek van informatie-overload en technische scraping-barrières. 
-
-Het onderzoek bestaat uit volgende fasen:
+Hierbij wordt een cyclus doorlopen waarbij de theoretische probleemstelling uit de literatuurstudie direct de functionele vereisten van het prototype voedt. 
+Dit prototype dient vervolgens als het belangrijkste evaluatie-instrument om de haalbaarheid van geavanceerde scraping- en detectietechnieken te toetsen op live webomgevingen. 
+Het onderzoeksproces is opgedeeld in vier opeenvolgende fasen.
 
 \section{Fase 1: Literatuurstudie}
 In deze fase werd gestart met het theoretisch kaderen van het onderzoek, wat essentieel is om de relevantie van het onderwerp aan te tonen en zowel technische als conceptuele uitdagingen te begrijpen. 
 
+Het literatuuronderzoek fungeert als het fundament voor de geldigheid en geeft context aan het onderzoek. 
+Door een systematische analyse van relevante academische bronnen is de evolutie van webtechnologieën in kaart gebracht. 
+De focus lag hierbij op het identificeren van de kloof tussen theoretische metadata-standaarden en de rauwe, ongestructureerde realiteit van hedendaagse Vlaamse cultuurwebsites. 
+Daarnaast was een vergelijkende analyse van bestaande commerciële platformen noodzakelijk om hun specifieke gebreken binnen de gespecificeerde markt aan te kaarten.
+
 \begin{itemize}
-    \item \textbf{Doelstelling:} Het in kaart brengen van de complexiteit van het moderne web (zoals \gls{CSR} en \gls{SSR}) alsook de juridische (\gls{AVG}) regelgeving rondom extraheren van data. Dit is essentieel om te begrijpen waarom traditionele scraping-technieken momenteel falen.
+    \item \textbf{Doelstelling:} Het in kaart brengen van de complexiteit van het moderne web (zoals \gls{CSR} en \gls{SSR}) alsook de juridische (\gls{AVG}) regelgeving rondom het extraheren van data. Dit is essentieel om te begrijpen waarom traditionele scraping-technieken momenteel falen.
     \item \textbf{Deliverables:} Stand van zaken (Hoofdstuk \ref{ch:stand-van-zaken}).
-    \item \textbf{Onderzoeksmethode:} Literatuuronderzoek en comparatieve tekstanalyse.
+    \item \textbf{Onderzoeksmethode:} Literatuuronderzoek en webanalyse.
 \end{itemize}
 
 \section{Fase 2: Toolselectie}
-Op basis van de knelpunten die in het literatuuronderzoek werden vastgesteld (bijvoorbeeld de noodzaak om \textit{browser fingerprinting} te omzeilen), is er in de tweede fase gericht gezocht naar geschikte technologieën. Er is besloten om eerst de tools af te wegen in plaats van blindelings aan de implementatie te beginnen.
+Op basis van de knelpunten die in het literatuuronderzoek werden vastgesteld (bijvoorbeeld de noodzaak om \textit{browser fingerprinting} te omzeilen), 
+is er in de tweede fase gericht gezocht naar geschikte technologieën. 
+Er is besloten om de technische capaciteiten van potentiële tools grondig te evalueren ten opzichte van de functionele eisen, 
+in plaats van direct met implementatie te starten.
+
+De toolselectie is opgevat als een doelgerichte validatie op basis van vooraf gedefinieerde criteria. 
+In plaats van een brede, vergelijkende marktstudie uit te voeren, zijn opkomende en 
+gevestigde Python-bibliotheken rechtstreeks getoetst aan de harde technische barrières die in Hoofdstuk \ref{ch:stand-van-zaken} werden gedefinieerd. 
+Er is een grondige evaluatie uitgevoerd van de officiële documentatie en architecturale eigenschappen van frameworks zoals Scrapling en Celery. 
+De tools zijn hierbij kritisch beoordeeld op specifieke succesfactoren: hun ingebouwde mechanismen voor het omzeilen van anti-bot systemen (via TLS- en fingerprint-spoofing), 
+hun ondersteuning voor asynchrone processen om de detectiesnelheid te waarborgen, en hun bijdrage aan de schaalbaarheid en integriteit van het datamodel.
+
 \begin{itemize}
-    \item \textbf{Doelstelling:} Het selecteren en verantwoorden van de meest geschikte technologieën. Dit is cruciaal om een inzicht te krijgen in de technische haalbaarheid van het project te bepalen en de implementatie te optimaliseren.
-    \item \textbf{Deliverables:} Een verantwoorde technologiekeuze opgelijst in de shortlist (Hoofdstuk \ref{ch:shortlist}).
-    \item \textbf{Onderzoeksmethode:} Analytisch literatuuronderzoek van technische documentatie.
+    \item \textbf{Doelstelling:} Het evalueren, selecteren en verantwoorden van de specifieke technologieën die technisch in staat zijn om de gedefinieerde webbarrières te doorbreken. Alsook efficiëntie en onderhoudbaarheid te waarborgen bij het bouwen van een schaalbaar notificatiesysteem.
+    \item \textbf{Deliverables:} Een technologische verantwoording opgelijst in de shortlist (Hoofdstuk \ref{ch:shortlist}).
+    \item \textbf{Onderzoeksmethode:} Criteria-gerichte analyse van de documentatie.
 \end{itemize}
 
 \section{Fase 3: Systeemontwerp en Implementatie}
-Na de theoretische en technologische afbakening kan overgegaan worden tot de praktische uitwerking in de vorm van een prototype. Het bouwen van een \gls{PoC} is de meest geschikte methode om technische theorieën in de praktijk te modelleren.
+Na de theoretische en technologische afbakening is overgegaan tot de praktische uitwerking in de vorm van een prototype. 
+Het bouwen van een \gls{PoC} is de meest geschikte methode om technische theorieën in de praktijk te modelleren.
+
+Tijdens de implementatiefase is de verschuiving gemaakt van abstracte concepten naar een concreet software-ontwerp. 
+De backend-architectuur is modulair opgebouwd rond een FastAPI-kern om een strikte scheiding van belangen te garanderen tussen de API-endpoints, 
+de persistentielaag en de achtergrondprocessen. De scraping-logica is bewust configuratie-gestuurd ontworpen; 
+door extractie-instructies te isoleren in configuratielagen is getoetst hoe herbruikbaar en onderhoudbaar de scraping-engine blijft wanneer deze wordt geconfronteerd met drastisch verschillende HTML-structuren.
+
 \begin{itemize}
     \item \textbf{Doelstelling:} Het ontwerpen en ontwikkelen van een functioneel prototype. Hierbij wordt de technische haalbaarheid van het concept op de proef gesteld, en worden de theoretische inzichten uit de literatuurstudie toegepast in een concrete implementatie.
     \item \textbf{Deliverables:} Een functionerend prototype van de server architectuur met minimale webinterfaces voor gebruikers (Hoofdstuk \ref{ch:proof-of-concept}).
@@ -60,9 +82,18 @@ Na de theoretische en technologische afbakening kan overgegaan worden tot de pra
 \end{itemize}
 
 \section{Fase 4: Teststrategie en Evaluatie}
-Om de effectiviteit van de ontwikkelde \gls{PoC} te evalueren, is er een duidelijke teststrategie geformuleerd. Omdat het systeem sterk asynchroon en afhankelijk is van externe (live) data, ligt de focus van de testen voornamelijk op integratie, accuraatheid en belastbaarheid, eerder dan op de statische code.
+Om de effectiviteit van de ontwikkelde \gls{PoC} te evalueren, is er een duidelijke teststrategie geformuleerd. 
+Omdat het systeem sterk asynchroon en afhankelijk is van externe data, ligt de focus van de testen voornamelijk op integratie, 
+accuraatheid en belastbaarheid, eerder dan op statische code.
+
+De evaluatiefase vormt het einde van het onderzoek en valideert of het ontwikkelde prototype voldoet aan de initieel gewenste prestatie-indicatoren. 
+Gezien de dynamische aard van de brondata is gekozen voor een empirische teststrategie op basis van live interacties. 
+Het systeem is blootgesteld aan reële scenario's waarbij de detectiesnelheid continu is gemonitord via Flower-logging. 
+Er is geanalyseerd in welke mate het matching-algoritme accuraat blijft en hoe de netwerklaag reageert op defensieve barrières, 
+om zo de uiteindelijke betrouwbaarheid van het notificatiemechanisme te staven.
+
 \begin{itemize}
-    \item \textbf{Doelstelling:} Het valideren van het systeem op basis van responstijd, betrouwbaarheid en detectie-nauwkeurigheid. Ook zal de schaalbaarheid geëvalueerd worden op basis van mogelijkheid tot toevoegen van nieuwe databronnen. Hierbij zal specifiek het succespercentage (of eventueel falen) van de geselecteerde \textit{web scraping} tool worden geëvalueerd tegenover webpagina's om na te gaan of de \textit{change detection} (bijv. concert afgelast of ticketprijzen aangepast) tijdig en onopgemerkt wordt geregistreerd.
-    \item \textbf{Deliverables:} Analyse van technische metrics en de resulterende conclusie (Hoofdstuk \ref{ch:conclusie}).
-    \item \textbf{Onderzoeksmethode:} Geautomatiseerde systeemtesten op live externe platformen, aangevuld met analyse van logging en architecturale pijnpunten.
+    \item \textbf{Doelstelling:} Het valideren van het systeem op basis van responstijd, betrouwbaarheid en detectie-nauwkeurigheid. Ook zal de schaalbaarheid geëvalueerd worden op basis van de mogelijkheid tot het toevoegen van nieuwe databronnen. Hierbij zal specifiek het succespercentage van de geselecteerde \textit{web scraping} tool worden geëvalueerd tegenover live webpagina's om na te gaan of de \textit{change detection} tijdig en stabiel wordt geregistreerd.
+    \item \textbf{Deliverables:} Analyse van technische metrics (Hoofdstuk \ref{ch:resultaten}) en de resulterende conclusie (Hoofdstuk \ref{ch:conclusie}).
+    \item \textbf{Onderzoeksmethode:} Geautomatiseerde systeemtesten op live externe platformen, aangevuld met een analyse van logging en architecturale pijnpunten.
 \end{itemize}
