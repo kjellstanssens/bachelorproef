@@ -83,17 +83,34 @@ door extractie-instructies te isoleren in configuratielagen is getoetst hoe herb
 
 \section{Fase 4: Teststrategie en Evaluatie}
 Om de effectiviteit van de ontwikkelde \gls{PoC} te evalueren, is er een duidelijke teststrategie geformuleerd. 
-Omdat het systeem sterk asynchroon en afhankelijk is van externe data, ligt de focus van de testen voornamelijk op integratie, 
-accuraatheid en belastbaarheid, eerder dan op statische code.
+Omdat het systeem sterk asynchroon en afhankelijk is van externe data, 
+ligt de focus van de testen voornamelijk op integratie, accuratheid en belastbaarheid.
 
-De evaluatiefase vormt het einde van het onderzoek en valideert of het ontwikkelde prototype voldoet aan de initieel gewenste prestatie-indicatoren. 
-Gezien de dynamische aard van de brondata is gekozen voor een empirische teststrategie op basis van live interacties. 
-Het systeem is blootgesteld aan reële scenario's waarbij de detectiesnelheid continu is gemonitord via Flower-logging. 
-Er is geanalyseerd in welke mate het matching-algoritme accuraat blijft en hoe de netwerklaag reageert op defensieve barrières, 
-om zo de uiteindelijke betrouwbaarheid van het notificatiemechanisme te staven.
+De evaluatiefase vormt het einde van het onderzoek en valideert of het ontwikkelde prototype voldoet aan de volgende evaluatiecriteria
+die de basis vormen voor een succesvolle implementatie:
+\label{sec:evaluatie-criteria}
+\begin{itemize}
+    \item \textbf{Architecturale Schaalbaarheid:} Het ontwerp is 
+    geslaagd als een nieuwe venue toegevoegd kan worden zonder wijzigingen aan de core-logica.
+    
+    \item \textbf{Snelheid en Frequentie:} Het hanteert volgende tijdsnormen: 
+    een detectiesnelheid waarbij nieuwe concerten binnen 4 uur worden verwerkt, en een 
+    notificatie-interval waarbij matches gebundeld maximaal 
+    één keer per 24 uur via e-mail worden verzonden.
+    
+    \item \textbf{Precisie:} Een matching-nauwkeurigheid van 
+    meer dan 90\% waarbij notificaties strikt overeenkomen 
+    met de specifieke gebruikersvoorkeuren.
+    
+    \item \textbf{Betrouwbaarheid:} Een delivery rate van 
+    meer dan 95\% voor de verzonden e-mails bij transportfouten.
+\end{itemize}
 
 \begin{itemize}
-    \item \textbf{Doelstelling:} Het valideren van het systeem op basis van responstijd, betrouwbaarheid en detectie-nauwkeurigheid. Ook zal de schaalbaarheid geëvalueerd worden op basis van de mogelijkheid tot het toevoegen van nieuwe databronnen. Hierbij zal specifiek het succespercentage van de geselecteerde \textit{web scraping} tool worden geëvalueerd tegenover live webpagina's om na te gaan of de \textit{change detection} tijdig en stabiel wordt geregistreerd.
-    \item \textbf{Deliverables:} Analyse van technische metrics (Hoofdstuk \ref{ch:resultaten}) en de resulterende conclusie (Hoofdstuk \ref{ch:conclusie}).
-    \item \textbf{Onderzoeksmethode:} Geautomatiseerde systeemtesten op live externe platformen, aangevuld met een analyse van logging en architecturale pijnpunten.
+    \item \textbf{Doelstelling:} Het valideren van het systeem 
+    op basis van de hierboven gedefinieerde succescriteria.
+    \item \textbf{Deliverables:} Analyse van technische metrics 
+    en de resulterende conclusie (Hoofdstuk \ref{ch:resultaten-evaluatie}).
+    \item \textbf{Onderzoeksmethode:} Geautomatiseerde systeemtesten 
+    op live externe platformen en offline DOM-structuren.
 \end{itemize}
