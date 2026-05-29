@@ -197,7 +197,7 @@ class ScraperEngine:
         )
 \end{lstlisting}
 
-\subsection{Strategische Selectie van de Extractiemotor}
+\subsection{Strategische Selectie van de fetcher}
 \label{sec:extractie-motor}
 
 Het \texttt{Scrapling}-framework biedt een modulair arsenaal aan 
@@ -280,7 +280,7 @@ Het systeem is modulair opgezet, het bestaat uit 4 delen die samen een volwaardi
     \item \textbf{Trigger}: In de Celery-taak die de \textit{change detection} uitvoert, wordt de notificatie-queue aangeroepen.
                             Dit gebeurt in \texttt{process\_scraped\_items} (Listing~\ref{lst:change-detection}) in de regels waar \texttt{queue\_notifications\_for\_concert} wordt aangeroepen, wat zowel bij updates als bij nieuwe concerten is.
     \item \textbf{Matcher}: De matcher is verantwoordelijk voor het toevoegen van notificaties aan de queue op basis van de gebruikersvoorkeuren. 
-                            Deze functie \texttt{queue\_notifications\_for\_concert} (Listing~\ref{lst:notification-queueing}) controleert of er een gebruikersvoorkeur matcht met de venue of artiest van het concert.
+                            Deze functie \newline \texttt{queue\_notifications\_for\_concert} (Listing~\ref{lst:notification-queueing}) controleert of er een gebruikersvoorkeur matcht met de venue of artiest van het concert.
                             Indien dit zo is, wordt er gekeken of er al een notificatie hiervoor bestaat, als dat niet het geval is wordt er een nieuwe notificatie toegevoegd aan de queue. 
     \item \textbf{Queue}: De notificatiequeue is in deze \gls{PoC} geïmplemented als een database-tabel waarin de notificaties worden opgeslagen met een status aangezien deze gebundeld worden. Het gebruikte model voor deze queue staat in Listing~\ref{lst:notification-model}.
                           De Celery-worker die verantwoordelijk is voor het versturen van notificaties, haalt de items uit deze queue en verwerkt ze.
@@ -370,7 +370,7 @@ deze dependency injection waarborgt het lifecycle-beheer van de database-sessies
 Secrets zoals database SMTP credentials worden beheerd via omgevingsvariabelen en geladen met behulp van de Python-dotenv bibliotheek. 
 Deze aanpak voorkomt dat gevoelige informatie in de codebase terechtkomt en maakt het gemakkelijker om verschillende configuraties te beheren voor ontwikkel-, test- en productieomgevingen.
 
-Verder wordt er een strikt gecontroleerd welke domeinen toegang hebben tot de \gls{API}, door middel van de CORS-middleware in FastAPI.
+Verder wordt er strikt gecontroleerd welke domeinen toegang hebben tot de \gls{API}, door middel van de CORS-middleware in FastAPI.
 
 \begin{lstlisting}[language=Python,label={CORS Middleware},caption={Voorbeeld van het instellen van CORS-middleware in FastAPI.}]
     from fastapi.middleware.cors import CORSMiddleware

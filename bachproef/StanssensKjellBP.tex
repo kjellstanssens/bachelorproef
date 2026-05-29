@@ -11,7 +11,6 @@
 % - If you write your thesis in English (remark: only possible after getting
 %   explicit approval!), remove the option "dutch," or replace with "english".
 
-\usepackage{lipsum} % For blind text, can be removed after adding actual content
 
 %% Pictures to include in the text can be put in the graphics/ folder
 \graphicspath{{../graphics/}}
@@ -49,6 +48,8 @@
 \usepackage{parskip}
 \setlength{\parskip}{1em}
 
+\usepackage{morewrites}
+
 \usepackage[toc,acronym]{glossaries}
 \makeglossaries
 
@@ -73,6 +74,8 @@
 
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
 
 \definecolor{keywordcolor}{RGB}{0, 51, 179}   
 \definecolor{stringcolor}{RGB}{196, 26, 22}   
@@ -172,7 +175,7 @@
 
 % If you included tables and/or source code listings, uncomment the appropriate
 % lines.
-% \listoftables
+\listoftables
 
 \listoflistings
 

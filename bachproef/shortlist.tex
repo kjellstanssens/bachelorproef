@@ -9,8 +9,8 @@ aangezien er voldoende technische barrières zijn zoals besproken in Hoofdstuk \
 
 \subsection{Communicatie}
 
-Om de communicatie tussen de server en client mogelijk te maken is er gekozen voor een FastAPI \autocite{FastAPI} backend. Het is een modern, high-performance web framework voor het bouwen van \gls{API}'s met Python gebaseerd op Starlette.
-Het vermindert \textit{boilerplate} code zoals validatie, documentatie, serializatie en versnelt de ontwikkeling van \gls{API}'s 200-300\%, ook houdt het hierdoor de code leesbaar en onderhoudbaar.
+Om de communicatie tussen de server en client mogelijk te maken, is er gekozen voor een FastAPI \autocite{FastAPI} backend. Het is een modern, high-performance web framework voor het bouwen van \gls{API}'s met Python gebaseerd op Starlette.
+Het vermindert \textit{boilerplate} code zoals validatie, documentatie, serializatie en versnelt de ontwikkeling van \gls{API}'s met 200-300\%, ook houdt het hierdoor de code leesbaar en onderhoudbaar.
 
 Voor het gebruik van FastAPI zijn ook volgende technologieën nodig:
 \begin{itemize}
@@ -21,7 +21,7 @@ Voor het gebruik van FastAPI zijn ook volgende technologieën nodig:
 
 \subsection{Data-integriteit}
 
-Om de integriteit van de verzamelde data te waarborgen is PostgreSQL \autocite{PostgreSQL} gekozen als relationele database. PostgreSQL is een krachtig, open-source relational database systeem dat bekend staat om zijn betrouwbaarheid, schaalbaarheid, uitgebreide functieset en performantie. 
+Om de integriteit van de verzamelde data te waarborgen, is PostgreSQL \autocite{PostgreSQL} gekozen als relationele database. PostgreSQL is een krachtig, open-source relational database systeem dat bekend staat om zijn betrouwbaarheid, schaalbaarheid, uitgebreide functieset en performantie. 
 Het ondersteunt geavanceerde datatypes, complexe query's en biedt robuuste mechanismen voor gegevensintegriteit, zoals transacties en constraints.
 
 Als \gls{ORM} tool is SQLAlchemy \autocite{SQLAlchemy} gebruikt, wat een reputabele toolkit is voor het werken met relationele databases. 
@@ -30,7 +30,7 @@ Het ondersteunt ook verschillende databasesystemen, waaronder PostgreSQL, en bie
 
 En voor het beheren van database-migraties tijdens de ontwikkeling is Alembic \autocite{Alembic} gebruikt, een database-migratietool die ontworpen is voor gebruik met SQLAlchemy. 
 Alembic maakt het mogelijk om database-schema's te beheren en migreren terwijl de applicatie evolueert, waardoor het eenvoudiger wordt om wijzigingen in de databasemodellen door te voeren zonder gegevensverlies. 
-Dit waarbogt de schaalbaarheid en onderhoudbaarheid van de applicatie op lange termijn.
+Dit waarborgt de schaalbaarheid en onderhoudbaarheid van de applicatie op lange termijn.
 
 \subsection{Data-extractie}
 
@@ -52,7 +52,7 @@ Tot slot ondersteunt Scrapling ingebouwde "Robots.txt Compliance", zodat het sys
 
 \subsection{Achtergrondverwerking}
 
-Om de strikte tijdslimieten te halen en de efficiëntie te verhogen, is er gebruikt gemaakt van Celery \autocite{Celery}, een gedistribueerde taskqueue die asynchrone taakverwerking mogelijk maakt. 
+Om de strikte tijdslimieten te halen en de efficiëntie te verhogen, is er gebruikgemaakt van Celery \autocite{Celery}, een gedistribueerde taskqueue die asynchrone taakverwerking mogelijk maakt. 
 Celery stelt ons in staat om taken zoals \textit{webscraping}, data-analyse en het versturen van de notificaties op de achtergrond uit te voeren, waardoor de venues gescraped kunnen worden zelfs indien er een taak faalt. 
 Celery ondersteunt ook schaalbaarheid, waardoor het mogelijk is om meerdere werkers toe te voegen om de verwerking van taken te versnellen naarmate de hoeveelheid data toeneemt.
 
@@ -67,4 +67,4 @@ Flower biedt een webinterface die real-time inzicht geeft in de taakverwerking, 
 Voor het testen van de backend is er gekozen voor Pytest \autocite{Pytest}, een krachtig en flexibel testing framework voor Python. 
 Pytest maakt het eenvoudig om tests te schrijven en uit te voeren, en biedt uitgebreide functionaliteit zoals fixtures, parametrisatie en ondersteuning voor verschillende teststijlen. 
 Het stelt ons in staat om unit tests, integratietests en end-to-end tests te schrijven om de functionaliteit en betrouwbaarheid van de backend te waarborgen. 
-Ook is hierbij gebruik gemaakt van httpx \autocite{HTTPX} als HTTP-client voor het testen van de API-endpoints, waardoor we realistische tests kunnen uitvoeren die de interactie tussen de client en server simuleren.
+Ook is hierbij gebruikgemaakt van httpx \autocite{HTTPX} als HTTP-client voor het testen van de API-endpoints, waardoor we realistische tests kunnen uitvoeren die de interactie tussen de client en server simuleren.

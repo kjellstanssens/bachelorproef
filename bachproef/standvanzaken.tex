@@ -11,7 +11,7 @@ In dit hoofdstuk wordt de theoretische kennis verworven om deze bachelorproef te
 Waar de inleiding de algemene problematiek van versnipperde eventdata en de noodzaak voor een gecentraliseerd notificatiesysteem schetste, 
 spitst dit hoofdstuk zich toe op de dieperliggende technische en conceptuele uitdagingen. 
 De hier verzamelde inzichten vormen de noodzakelijke brug tussen de probleemstelling en de methodologie, 
-waarin de ontwerpkeuzes voor het uiteindelijke artefact worden verantwoord.
+waarin de ontwerpkeuzes voor het uiteindelijke prototype worden verantwoord.
 
 De structuur van dit hoofdstuk volgt de logische opbouw van het systeem. Eerst wordt het digitale landschap van concertdistributie geanalyseerd om de tekortkomingen van de huidige toestand te identificeren. 
 Vervolgens wordt onderzocht hoe semantiek en metadata-standaarden, zoals specifieke concertontologieën, kunnen bijdragen aan een universele structurering van deze data. 
@@ -29,7 +29,7 @@ Dit komt omdat de waarde van data voortdurend stijgt; het speelt een grote rol i
 \textcite{Tseriotis2025} stelt dat het bezitten van deze data op zich niet voldoende is, maar dat de waarde ervan sterk afhankelijk is van de structuur en integriteit van de datasets.
 
 Er is een enorme hoeveelheid data publiekelijk beschikbaar op het internet \autocite{Vording2020}, maar de vorm waarin deze toegankelijk is, vormt de grootste uitdaging. 
-Hoewel iedereen deze data kan consulteren, slaagt niet iedereen erin om deze efficiënt te verzamelen in een heterogene omgeving. In de praktijk betekent dit dat een Vlaamse concertganger handmatig websites van verscheidene zalen zoals de Ancienne Belgique (AB), Trix, de VIERNULVIER (voorheen Vooruit), enzovoort moet monitoren. 
+Hoewel iedereen deze data kan consulteren, slaagt niet iedereen erin om deze efficiënt te verzamelen in een heterogene omgeving. In de praktijk betekent dit dat een Vlaamse concertganger handmatig websites van verscheidene zalen zoals de Ancienne Belgique, Trix, de VIERNULVIER (voorheen Vooruit), enzovoort moet monitoren. 
 Elk van deze websites hanteert een eigen structuur en presentatiewijze, wat de complexiteit van handmatige monitoring verhoogt en de noodzaak voor een geautomatiseerd, overkoepelend systeem onderbouwt.
 \textit{Webscraping} is volgens \textcite{Vording2020} de optimale technologie om dit probleem aan te pakken, aangezien het zowel ongestructureerde als gestructureerde data geautomatiseerd kan verzamelen en omzetten tot bruikbare formaten.
 
@@ -74,13 +74,13 @@ Volgende informatie is verzameld gedurende een korte case study van het Bandsint
 Naast de tekortkomingen in personalisatie is er een probleem met de wijze waarop eventdata technisch beschikbaar wordt gesteld \autocite{Rutten2018}. 
 Daarom moet volgens \textcite{Rutten2018} bij elke vorm van digitale collecties een overleg gebeuren met de potentiële hergebruikers van die data. 
 Deze bewering toont aan dat er niet genoeg rekening gehouden wordt met hoe externe systemen deze data moeten consumeren. 
-Hoewel \gls{API}'s vaak als oplossing worden beschouwd, blijkt in de praktijk vaak dat dit voor nichemarkten dit niet altijd het geval is. 
+Hoewel \gls{API}'s vaak als oplossing worden beschouwd, blijkt in de praktijk vaak dat dit voor nichemarkten niet altijd het geval is. 
 Er is dus werkelijk geen efficiënter alternatief dan \textit{web scraping} om deze grote hoeveelheden data correct te consumeren \autocite{Vording2020}. 
 
 Tot slot zijn veel bestaande oplossingen beperkt in de timing van hun informatielevering \autocite{NotificationSurvey2017}. 
 Uit onderzoek van \textcite{NotificationSurvey2017} wordt geconcludeerd dat notificaties, 
 die de aandacht van de gebruiker eisen, op een ongelegen moment eerder een omgekeerd effect hebben en dus niet voordelig zijn voor de gebruiker maar storend. 
-Indien er voortdurend notificaties op verkeerde momenten geleverd worden kan dit de oorzaak zijn van irritatie bij gebruikers en kan dit leiden het verwijderen van de corresponderende applicatie. 
+Indien er voortdurend notificaties op verkeerde momenten geleverd worden kan dit de oorzaak zijn van irritatie bij gebruikers en kan dit leiden tot het verwijderen van de corresponderende applicatie. 
 Dit benadrukt de noodzaak voor een intelligent systeem dat rekening houdt met de context van de ontvanger.
 
 \section{Semantiek en standaardisatie van eventgegevens}
@@ -116,7 +116,7 @@ Om tot dit resultaat te komen zijn volgende eigenschappen gedefinieerd door \tex
     \item \textbf{limit:} Ook wordt er een eigenschap gedefinieerd om het aantal tickets per individuele klant te beperken om misbruik te voorkomen en voorraadbeheer te faciliteren \autocite{Graves2003}.
 \end{itemize}
 
-Door deze eigenschappen te hanteren kan ongestructureerde data van diverse websites omgezet worden naar betekenisvolle data.
+Door deze eigenschappen te hanteren, kan ongestructureerde data van diverse websites omgezet worden naar betekenisvolle data.
 Dit sluit aan bij de visie van \textcite{Zangerle2018}, die stelt dat gebruikersmodellen ook contextuele aspecten als tijd en locatie moeten bevatten.
 Deze contextuele informatie is belangrijk om relevantie te garanderen. 
 
@@ -175,7 +175,7 @@ De laatste ontwikkelingen in scrapingsmechanismen tonen wel aan dat sommige tool
 
 Hoewel \textit{webscraping} veel vooruitgang ziet, bevindt het gebruik ervan zich nog in een grijs gebied aangezien er geen specifieke wetgeving is die dit reguleert \autocite{Krotov2018}. \textcite{Krotov2018} identificeren 4 juridische kwesties waarop claims tegen \textit{webscraping} gebaseerd kunnen zijn: contractbreuk via \gls{ToS}, schending van auteursrechten, schending van de \gls{CFAA} en de onrechtmatige daad van \textit{trespass to chattels}. Deze laatste claim wordt vooral gebruikt wanneer scraping de server overbelast.
 
-In de Europese Unie valt \textit{webscraping} voornamelijk onder de \gls{AVG} (\gls{GDPR}) \autocite{Bereczki2024}. Bij het scrapen van publieke data, zoals concertinformatie, is \textit{Lawfulness of processing (Article 6(1)(f))} (vastgelegd in \gls{AVG} (\gls{GDPR}) cruciaal. Dit artikel houdt in dat de verwerking van de data noodzakelijk moet zijn voor de legitieme belangen van de derde partij. In dit onderzoek is het legitieme belang het aanbieden van een gecentraliseerd notificatiesysteem en het scrapen van de publieke concertinformatie is noodzakelijk om dit aan de eindgebruikers te kunnen leveren.
+In de Europese Unie valt \textit{webscraping} voornamelijk onder de \gls{AVG} (\gls{GDPR}) \autocite{Bereczki2024}. Bij het scrapen van publieke data, zoals concertinformatie, is \textit{Lawfulness of processing (Article 6(1)(f))} (vastgelegd in \gls{AVG} (\gls{GDPR})) cruciaal. Dit artikel houdt in dat de verwerking van de data noodzakelijk moet zijn voor de legitieme belangen van de derde partij. In dit onderzoek is het legitieme belang, het aanbieden van een gecentraliseerd notificatiesysteem en het scrapen van de publieke concertinformatie noodzakelijk om dit aan de eindgebruikers te kunnen leveren.
 
 Naast de juridische aspecten zijn ethische overwegingen ook cruciaal, zo kan een scraping-mechanisme ervoor zorgen dat de gebruiker niet bijdraagt aan het genereren van inkomsten bij de originele partij, aangezien deze bijvoorbeeld niet aan de advertenties wordt blootgesteld \autocite{Krotov2018}. Ook kan het scrape-project een concurrerende dienst zijn die de originele partij schaadt. Daarom is het van belang dat men bij implementatie van een scraping-mechanisme de impact op bronorganisaties/dataleveranciers minimaliseert.
 
@@ -192,7 +192,7 @@ Om dit scrape-project te realiseren met de huidige juridische en ethische normen
 
 \subsection{Informatie-overload en notificatievermoeidheid}
 
-In het huidige digitale tijdperk worden gebruikers continu blootgesteld aan een overvloed aan informatie, wat leidt tot informatie-overload \autocite{NotificationSurvey2017}. Dit komt door de push-based notificaties zoals meldingen op mobiele apparaten. Deze overvloed aan prikkels kan leiden tot notificatievermoeidheid, een fenomeen waarbij gebruikers het gevoel hebben dat ze constant gestoord worden door irrelevante of slecht getimede notificaties. Uit onderzoek blijkt dat notificaties die aandacht eisen op ongelegen momenten leiden tot irritatie en uiteindelijk tot het verwijderen van de notificatiebron. Het gevolg hiervan is dat ook relevante informatie genegeerd wordt, wat de effectiviteit van het notificatiesysteem vermindert. Om negatieve effecten te minimaliseren is het van groot belang dat notificatiesystemen rekening houden met de vorm en timing van de notificaties. 
+In het huidige digitale tijdperk worden gebruikers continu blootgesteld aan een overvloed aan informatie, wat leidt tot informatie-overload \autocite{NotificationSurvey2017}. Dit komt door de push-based notificaties zoals meldingen op mobiele apparaten. Deze overvloed aan prikkels kan leiden tot notificatievermoeidheid, een fenomeen waarbij gebruikers het gevoel hebben dat ze constant gestoord worden door irrelevante of slecht getimede notificaties. Uit onderzoek blijkt dat notificaties die aandacht eisen op ongelegen momenten leiden tot irritatie en uiteindelijk tot het verwijderen van de notificatiebron. Het gevolg hiervan is dat ook relevante informatie genegeerd wordt, wat de effectiviteit van het notificatiesysteem vermindert. Om negatieve effecten te minimaliseren, is het van groot belang dat notificatiesystemen rekening houden met de vorm en timing van de notificaties. 
 
 \textcite{Lin2021} benadrukt dat het minimaliseren van de menselijke factor in de scraping-workflow essentieel is voor de schaalbaarheid en efficiëntie van het systeem. Door de extractie-logica breed inzetbaar te maken voor verschillende HTML-structuren, kunnen notificaties vanuit één centraal punt worden verzonden in plaats van via versnipperde applicaties. Dit vermindert de kans op notificatievermoeidheid, aangezien gebruikers slechts één bron van notificaties hebben die relevant is voor hun interesses.
 
