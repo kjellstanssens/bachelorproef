@@ -1,11 +1,15 @@
-\chapter{Bijlage}
+\chapter{Bijlagen}
 \label{ch:bijlage}
 
-\begin{lstlisting}[language=Python,label={Change Detection},caption={Voorbeeld van een Celery taak voor het verwerken van gescrapete items en het detecteren van veranderingen.}]
+In deze bijlage worden de belangrijkste programmastructuren en broncodes van de Proof of Concept (PoC) backend weergegeven. Deze code dient als technische onderbouwing voor de systeemarchitectuur (Hoofdstuk \ref{ch:proof-of-concept}) en de testresultaten (Hoofdstuk \ref{ch:resultaten-evaluatie}).
+
+\section{Core Server Logica}
+
+\begin{lstlisting}[language=Python, label={lst:change-detection}, caption={Celery-taak voor het verwerken van gescrapete items en change detection.}]
 @celery_app.task(name="app.services.concert.process_scraped_items")
 def process_scraped_items(venue_id: int, items: list):
     """
-    Celery task to process a list of scraped items for a specific venue.
+    Celery-taak voor het verwerken van een lijst met gescrapete items voor een specifieke locatie.
     """
     db = SessionLocal()
     try:
@@ -14,18 +18,14 @@ def process_scraped_items(venue_id: int, items: list):
         now = datetime.now()
 
         for item in items:
-            # Convert ISO string date back to datetime if needed
             item_date = item["date"]
             if isinstance(item_date, str):
                 item_date = datetime.fromisoformat(item_date)
 
-            # Check if exists
             db_concert = get_concert_by_url(db, item["url"])
             
             if db_concert:
-                # Potential update
                 if db_concert.content_hash != item["content_hash"]:
-                    # Resolve performers from title
                     performers = resolve_performers_from_title(db, item["title"])
                     db_concert.performers = performers
 
@@ -37,14 +37,11 @@ def process_scraped_items(venue_id: int, items: list):
                     db_concert.status = "active"
                     db_concert.last_scraped_at = now
                     updated_count += 1
-                    db.flush() # Ensure ID is available
+                    db.flush()
                     queue_notifications_for_concert(db, db_concert.id, "updated")
                 else:
-                    # Just update the timestamp
                     db_concert.last_scraped_at = now
             else:
-                # Create new
-                # Resolve performers from title
                 performers = resolve_performers_from_title(db, item["title"])
 
                 new_concert = Concert(
@@ -58,14 +55,13 @@ def process_scraped_items(venue_id: int, items: list):
                     status="active",
                     last_scraped_at=now
                 )
-                new_concert.performers = performers # Link performers
+                new_concert.performers = performers
                 db.add(new_concert)
-                db.flush() # Get ID
+                db.flush()
                 queue_notifications_for_concert(db, new_concert.id, "new")
                 new_count += 1
         
         db.commit()
-        # Mark missing ones as cancelled
         mark_venue_concerts_removed(db, venue_id, now)
         
         return {
@@ -78,11 +74,10 @@ def process_scraped_items(venue_id: int, items: list):
         db.close()
 \end{lstlisting}
 
-\begin{lstlisting}[language=Python,label={Notification Queueing},caption={Voorbeeld van een functie voor het queueen van notificaties voor een concert.}]
+\begin{lstlisting}[language=Python, label={lst:notification-queueing}, caption={Functie voor het plaatsen van notificaties in de wachtrij.}]
     def queue_notifications_for_concert(db: Session, concert_id: int, notification_type: str):
     """
-    Finds all users who should be notified for this concert and queues a notification.
-    Uses the Subscription model's encapsulated logic.
+    Zoekt alle gebruikers op die een melding moeten ontvangen voor dit concert en plaatst deze in de wachtrij.
     """
     concert = db.execute(
         select(Concert).where(Concert.id == concert_id)
@@ -91,11 +86,9 @@ def process_scraped_items(venue_id: int, items: list):
     if not concert:
         return
 
-    # Call the encapsulated matching logic using the new property
     user_ids = Subscription.find_matching_users(db, concert.venue_id, concert.performer_ids)
     
     for u_id in user_ids:
-        # Check if already in queue for this concert (avoid duplicates in same 24h batch)
         existing = db.execute(
             select(NotificationQueue).where(
                 NotificationQueue.user_id == u_id,
@@ -115,26 +108,28 @@ def process_scraped_items(venue_id: int, items: list):
     db.commit()
 \end{lstlisting}
 
-\begin{lstlisting}[language=Python,label={Notification Queue Model},caption={Voorbeeld van een SQLAlchemy model voor de notificatie wachtrij.}]
+\begin{lstlisting}[language=Python, label={lst:notification-model}, caption={SQLAlchemy database-model voor de notificatiewachtrij.}]
     class NotificationQueue(Base):
     __tablename__ = "notification_queue"
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     concert_id = Column(Integer, ForeignKey("concerts.id"), nullable=False)
-    change_type = Column(String, nullable=False)  # "new" or "updated"
+    change_type = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     sent_at = Column(DateTime, nullable=True)
 
-    # Relationships
     user = relationship("User", back_populates="pending_notifications")
     concert = relationship("Concert")
 \end{lstlisting}
 
-\begin{lstlisting}[language=Python,label={Daily Digest Mailer},caption={Voorbeeld van een functie voor het verzenden van een dagelijkse email.}]
+\newpage
+\section{Notificatie- en Digest Mailer}
+
+\begin{lstlisting}[language=Python, label={lst:daily-digest-mailer}, caption={SMTP-integratie voor het verzenden van de dagelijkse samenvatting.}]
     def send_daily_digest(email: str, notifications: list):
     """
-    Sends a daily digest email with the list of new/updated concerts.
+    Verstuurt een dagelijkse samenvatting per e-mail met een lijst van nieuwe en gewijzigde concerten.
     """
     if not notifications:
         return
@@ -144,7 +139,6 @@ def process_scraped_items(venue_id: int, items: list):
     msg["From"] = "notifications@concert-poc.com"
     msg["To"] = email
 
-    # Create plain-text content
     text = "Here are your concert updates for today:\n\n"
     html = "<html><body><h2>Your Daily Concert Digest</h2><ul>"
 
@@ -172,16 +166,14 @@ def process_scraped_items(venue_id: int, items: list):
         return False
 \end{lstlisting}
 
-\begin{lstlisting}[language=Python,label={Daily Digest Processor},caption={Voorbeeld van een Celery-taak voor het verwerken van dagelijkse samenvattingen.}]
-    @celery_app.task(name="app.services.mailer.process_daily_digests")
+\begin{lstlisting}[language=Python, label={lst:daily-digest-processor}, caption={Celery-periodieke taak voor het batchen van gebruikersnotificaties.}]
+@celery_app.task(name="app.services.mailer.process_daily_digests")
 def process_daily_digests():
     """
-    Celery task that finds all users with pending notifications 
-    and sends them a consolidated daily digest email.
+    Celery-taak die alle gebruikers met openstaande notificaties opzoekt en hen een gebundelde dagelijkse samenvatting stuurt.
     """
     db = SessionLocal()
     try:
-        # Find all users who have at least one unsent notification
         users_with_notifications = db.execute(
             select(User)
             .join(NotificationQueue)
@@ -190,7 +182,6 @@ def process_daily_digests():
         ).scalars().all()
 
         for user in users_with_notifications:
-            # Batch items for this user, including relations for the email template
             notifications = db.execute(
                 select(NotificationQueue)
                 .options(
@@ -207,11 +198,600 @@ def process_daily_digests():
             if notifications:
                 success = send_daily_digest_email(user.email, notifications)
                 if success:
-                    # Mark notifications as sent with TZ-aware UTC
                     now = datetime.now(UTC).replace(tzinfo=None)
                     for n in notifications:
                         n.sent_at = now
                     db.commit()
     finally:
         db.close()
+\end{lstlisting}
+
+\newpage
+\section{Geautomatiseerde Testsuite (Kwaliteitsbewaking)}
+\label{sec:test-suite-code}
+
+De hieronder weergegeven testbestanden implementeren de geautomatiseerde validatie van de evaluatiecriteria via een mock-architectuur en lokale, native HTML-bestanden.
+
+\subsection{KPI 1: Architecturale schaalbaarheidstest}
+\label{lst:test-scraper}
+\begin{lstlisting}[language=Python, caption={Broncode van test\_scraper.py voor de evaluatie van de configuratie-gestuurde scraping-engine.}]
+import pytest
+import datetime
+from unittest.mock import patch, PropertyMock
+from scraper.engine import ScraperEngine
+from scraper.config_models import VenueScraperConfig, SelectorConfig, DateParsingConfig, PerformerStrategy
+from scrapling.engines.toolbelt.custom import Response
+
+def test_architecturale_schaalbaarheid_nieuwe_venue():
+    """
+    Test 1: Architecturale schaalbaarheid.
+    Er wordt gebruikgemaakt van een echte HTML-string om aan te tonen dat de scraper een volledig nieuwe locatie kan inlezen zolang de configuratie via json is gekoppeld.
+    """
+    
+    new_venue_config = VenueScraperConfig(
+        venue_name="Test Casino",
+        start_url="https://testcasino.be/agenda",
+        selectors=SelectorConfig(
+            card=".concert-card",
+            title=".concert-title",
+            date=".concert-date",
+            url=".concert-link",
+            image=".concert-img"
+        ),
+        date_parsing=DateParsingConfig(
+            type="format",
+            format="%Y-%m-%d %H:%M"
+        ),
+        performer_strategy=PerformerStrategy(
+            split_by=[","]
+        )
+    )
+
+    fictional_html = '''<html><body>
+        <div class="concert-card">
+            <h1 class="concert-title">The Rolling Stones, Snelle</h1>
+            <span class="concert-date">2026-10-14 20:30</span>
+            <a class="concert-link" href="/concert/the-rolling-stones">Link</a>
+            <img class="concert-img" src="/images/stones.jpg">
+        </div>
+        <div class="concert-card">
+            <h1 class="concert-title">Iron Maiden</h1>
+            <span class="concert-date">2026-11-20 19:00</span>
+            <a class="concert-link" href="/concert/iron-maiden">Link</a>
+            <img class="concert-img" src="/images/iron.jpg">
+        </div>
+    </body></html>'''
+
+    real_scrapling_response = Response(
+        url="https://testcasino.be/agenda", 
+        body=fictional_html.encode('utf-8'),
+        content=fictional_html.encode('utf-8'),
+        status=200,
+        reason="OK",
+        cookies={},
+        headers={},
+        request_headers={}
+    )
+    scraper_engine = ScraperEngine()
+    
+    with patch('scrapling.engines.toolbelt.custom.Response.text', new_callable=PropertyMock) as mock_text:
+        mock_text.return_value = fictional_html
+        with patch.object(scraper_engine.fetcher, 'get', return_value=real_scrapling_response):
+            
+            scraped_data = scraper_engine.scrape_venue(new_venue_config)
+            
+            assert len(scraped_data) == 2
+            
+            item1 = scraped_data[0]
+            assert item1['title'] == "The Rolling Stones, Snelle"
+            assert item1['date'] == datetime.datetime(2026, 10, 14, 20, 30)
+            assert str(item1['url']) == "https://testcasino.be/concert/the-rolling-stones"
+            assert str(item1['image_url']) == "https://testcasino.be/images/stones.jpg"
+            
+            assert "The Rolling Stones" in item1['performers']
+            assert "Snelle" in item1['performers']
+            assert len(item1['performers']) == 2
+            
+            item2 = scraped_data[1]
+            assert item2['title'] == "Iron Maiden"
+            assert str(item2['url']) == "https://testcasino.be/concert/iron-maiden"
+\end{lstlisting}
+
+\subsection{KPI 2: Frequentie- en bundelingstest}
+\label{lst:test-bundling}
+\begin{lstlisting}[language=Python, caption={Broncode van test\_bundling.py voor de validatie van het 24-uurs notificatie-interval.}]
+import pytest
+import uuid
+from datetime import datetime, timedelta
+from unittest.mock import patch, MagicMock
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+from app.core.database import SessionLocal
+from app.models.user import User
+from app.models.concert import Concert
+from app.models.venue import Venue as VenueModel
+from app.models.province import Province
+from app.models.notification import NotificationQueue
+from app.services.matcher import process_daily_digests
+
+@pytest.fixture(scope="function")
+def db_session():
+    """
+    Voorziet een transactionele databasesessie voor elke test die een rollback uitvoert.
+    """
+    connection = SessionLocal().get_bind().connect()
+    transaction = connection.begin()
+    db = Session(bind=connection)
+    try:
+        yield db
+    finally:
+        db.close()
+        transaction.rollback()
+        connection.close()
+
+def test_frequentie_en_bundeling(db_session: Session):
+    """
+    Test 2: Snelheid en frequentie.
+    Verifieert of meerdere matches binnen 24 uur worden gebundeld tot exact één verzending per gebruiker en dat een tweede run zonder nieuwe matches geen nieuwe e-mail verstuurt.
+    """
+    
+    test_email = f"test_bundling_{uuid.uuid4()}@example.com"
+    user = User(email=test_email)
+    db_session.add(user)
+    
+    venue = VenueModel(
+        name=f"Bundling Venue {uuid.uuid4()}",
+        city="Antwerp",
+        province=Province.ANTWERP,
+        website_url="https://test.be"
+    )
+    db_session.add(venue)
+    db_session.flush()
+
+    for i in range(5):
+        concert = Concert(
+            title=f"Bundled Concert {i}",
+            date=datetime.now() + timedelta(days=10 + i),
+            url=f"https://test.be/concert/{i}",
+            image_url="https://test.be/img.jpg",
+            venue_id=venue.id,
+            content_hash=f"hash_bundling_{uuid.uuid4()}_{i}"
+        )
+        db_session.add(concert)
+        db_session.flush()
+        
+        notif = NotificationQueue(
+            user_id=user.id,
+            concert_id=concert.id,
+            change_type="new",
+            sent_at=None
+        )
+        db_session.add(notif)
+    
+    db_session.flush()
+
+    class DummySession(MagicMock):
+        def close(self): pass
+        def __getattr__(self, name):
+            if name == "close":
+                return lambda: None
+            return getattr(db_session, name)
+
+    with patch("app.services.matcher.SessionLocal", return_value=DummySession()), \
+         patch("app.services.matcher.send_daily_digest") as mock_send_digest:
+        mock_send_digest.return_value = True
+        
+        process_daily_digests()
+        
+        calls_for_test_user = [call for call in mock_send_digest.call_args_list if call[0][0] == test_email]
+        
+        assert len(calls_for_test_user) == 1
+        
+        notifications_sent = calls_for_test_user[0][0][1]
+        assert len(notifications_sent) == 5
+
+    with patch("app.services.matcher.SessionLocal", return_value=DummySession()), \
+         patch("app.services.matcher.send_daily_digest") as mock_send_digest_2:
+        mock_send_digest_2.return_value = True
+        
+        process_daily_digests()
+        
+        calls_for_test_user_2 = [call for call in mock_send_digest_2.call_args_list if call[0][0] == test_email]
+        assert len(calls_for_test_user_2) == 0
+
+\end{lstlisting}
+
+\subsection{KPI 3: Matching-precisietest}
+\label{lst:test-precisie}
+\begin{lstlisting}[language=Python, caption={Broncode van test\_precisie.py voor de validatie van de matching-engine.}]
+import pytest
+import uuid
+from datetime import datetime, timedelta
+from sqlalchemy.orm import Session
+from app.core.database import SessionLocal
+from app.models.user import User
+from app.models.concert import Concert
+from app.models.venue import Venue as VenueModel
+from app.models.performer import Performer
+from app.models.province import Province
+from app.models.subscription import Subscription
+from app.services.matcher import queue_notifications_for_concert
+from app.models.notification import NotificationQueue
+from sqlalchemy import select
+
+@pytest.fixture(scope="function")
+def db_session():
+    connection = SessionLocal().get_bind().connect()
+    transaction = connection.begin()
+    db = Session(bind=connection)
+    try:
+        yield db
+    finally:
+        db.close()
+        transaction.rollback()
+        connection.close()
+
+def test_matching_precisie(db_session: Session):
+    """
+    Test 3: Precisie.
+    Verifieert of de notificaties strikt overeenkomen met de gebruikersvoorkeuren zonder foutieve meldingen of gemisse matches in de systeemlogica.
+    """
+
+    user_rock = User(email=f"rock_{uuid.uuid4()}@test.be")
+    user_pop = User(email=f"pop_{uuid.uuid4()}@test.be")
+    user_venue = User(email=f"venue_{uuid.uuid4()}@test.be")
+    db_session.add_all([user_rock, user_pop, user_venue])
+    db_session.flush()
+
+    ab_venue = VenueModel(name=f"AB {uuid.uuid4()}", city="Brussels", province=Province.ANTWERP, website_url="https://ab.be")
+    sport_venue = VenueModel(name=f"Sportpaleis {uuid.uuid4()}", city="Antwerp", province=Province.ANTWERP, website_url="https://sp.be")
+    db_session.add_all([ab_venue, sport_venue])
+    db_session.flush()
+
+    band_r = Performer(name=f"The Rockers {uuid.uuid4()}")
+    band_p = Performer(name=f"Pop Stars {uuid.uuid4()}")
+    db_session.add_all([band_r, band_p])
+    db_session.flush()
+
+    db_session.add(Subscription(user_id=user_rock.id, performer_id=band_r.id))
+    db_session.add(Subscription(user_id=user_pop.id, performer_id=band_p.id))
+    db_session.add(Subscription(user_id=user_venue.id, venue_id=sport_venue.id))
+    db_session.commit()
+
+    c1 = Concert(title="Concert 1", date=datetime.now(), url="none", venue_id=ab_venue.id, content_hash=str(uuid.uuid4()))
+    c1.performers.append(band_r)
+    db_session.add(c1)
+    
+    c2 = Concert(title="Concert 2", date=datetime.now(), url="none", venue_id=sport_venue.id, content_hash=str(uuid.uuid4()))
+    c2.performers.append(band_p)
+    db_session.add(c2)
+    
+    c3 = Concert(title="Concert 3", date=datetime.now(), url="none", venue_id=sport_venue.id, content_hash=str(uuid.uuid4()))
+    c3.performers.append(band_r)
+    db_session.add(c3)
+    
+    db_session.flush()
+
+    queue_notifications_for_concert(db_session, c1.id, "new")
+    queue_notifications_for_concert(db_session, c2.id, "new")
+    queue_notifications_for_concert(db_session, c3.id, "new")
+
+    def get_notifs(u_id):
+        return db_session.execute(
+            select(NotificationQueue.concert_id).where(NotificationQueue.user_id == u_id)
+        ).scalars().all()
+
+    rock_notifs = get_notifs(user_rock.id)
+    assert c1.id in rock_notifs
+    assert c3.id in rock_notifs
+    assert c2.id not in rock_notifs
+    assert len(rock_notifs) == 2
+
+    pop_notifs = get_notifs(user_pop.id)
+    assert c2.id in pop_notifs
+    assert c1.id not in pop_notifs
+    assert len(pop_notifs) == 1
+
+    venue_notifs = get_notifs(user_venue.id)
+    assert c2.id in venue_notifs
+    assert c3.id in venue_notifs
+    assert c1.id not in venue_notifs
+    assert len(venue_notifs) == 2
+\end{lstlisting}
+
+\subsection{KPI 4: Betrouwbaarheidstest mailer}
+\label{lst:test-reliability}
+\begin{lstlisting}[language=Python, caption={Broncode van test\_reliability.py voor de evaluatie van de foutafhandeling.}]
+import pytest
+import uuid
+from datetime import datetime, timedelta
+from unittest.mock import patch, MagicMock
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+from app.core.database import SessionLocal
+from app.models.user import User
+from app.models.concert import Concert
+from app.models.venue import Venue as VenueModel
+from app.models.province import Province
+from app.models.notification import NotificationQueue
+from app.services.matcher import process_daily_digests
+
+@pytest.fixture(scope="function")
+def db_session():
+    connection = SessionLocal().get_bind().connect()
+    transaction = connection.begin()
+    db = Session(bind=connection)
+    try:
+        yield db
+    finally:
+        db.close()
+        transaction.rollback()
+        connection.close()
+
+def test_mailer_betrouwbaarheid_foutafhandeling(db_session: Session):
+    """
+    Test 4: Betrouwbaarheid.
+    Verifieert de fouttoleranties van de bulk-mailer waarbij een falende e-mail op provider-niveau het proces niet onderbreekt en de overige e-mails succesvol worden verzonden.
+    """
+    
+    u1 = User(email=f"success1_{uuid.uuid4()}@test.be")
+    u2 = User(email=f"fail_{uuid.uuid4()}@test.be")  
+    u3 = User(email=f"success2_{uuid.uuid4()}@test.be")
+    db_session.add_all([u1, u2, u3])
+    
+    venue = VenueModel(name=f"Venue_{uuid.uuid4()}", city="Antwerp", province=Province.ANTWERP, website_url="https://test.be")
+    db_session.add(venue)
+    db_session.flush()
+
+    concert = Concert(
+        title="Test Reliability Concert",
+        date=datetime.now(),
+        url="none",
+        venue_id=venue.id,
+        content_hash=str(uuid.uuid4())
+    )
+    db_session.add(concert)
+    db_session.flush()
+
+    n1 = NotificationQueue(user_id=u1.id, concert_id=concert.id, change_type="new")
+    n2 = NotificationQueue(user_id=u2.id, concert_id=concert.id, change_type="new")
+    n3 = NotificationQueue(user_id=u3.id, concert_id=concert.id, change_type="new")
+    db_session.add_all([n1, n2, n3])
+    db_session.commit()
+
+    class DummySession(MagicMock):
+        def close(self): pass
+        def __getattr__(self, name):
+            if name == "close": return lambda: None
+            return getattr(db_session, name)
+
+    def mock_send(email, notifs):
+        if "fail_" in email:
+            return False
+        return True
+
+    with patch("app.services.matcher.SessionLocal", return_value=DummySession()), \
+         patch("app.services.matcher.send_daily_digest", side_effect=mock_send) as mock_send_digest:
+         
+        process_daily_digests()
+        
+        calls = [c[0][0] for c in mock_send_digest.call_args_list if "test.be" in c[0][0]]
+        assert len(calls) == 3
+
+    db_session.expire_all()
+    
+    db_n1 = db_session.execute(select(NotificationQueue.sent_at).where(NotificationQueue.id == n1.id)).scalar()
+    db_n2 = db_session.execute(select(NotificationQueue.sent_at).where(NotificationQueue.id == n2.id)).scalar()
+    db_n3 = db_session.execute(select(NotificationQueue.sent_at).where(NotificationQueue.id == n3.id)).scalar()
+
+    assert db_n1 is not None
+    assert db_n3 is not None
+    
+    assert db_n2 is None
+\end{lstlisting}
+
+\subsection{Integrale End-to-End Pipeline test}
+\label{lst:test-e2e}
+\begin{lstlisting}[language=Python, caption={Broncode van test\_e2e\_criteria.py voor de complete integratievalidatie en change detection.}]
+import pytest
+import datetime
+from unittest.mock import patch, MagicMock
+from scrapling.engines.toolbelt.custom import Response
+from app.models.venue import Venue
+from app.models.user import User
+from app.models.subscription import Subscription
+from app.models.concert import Concert
+from app.services.matcher import queue_notifications_for_concert, process_daily_digests
+from scraper.engine import ScraperEngine
+from scraper.config_models import VenueScraperConfig, SelectorConfig, DateParsingConfig, PerformerStrategy
+from sqlalchemy.orm import Session
+from app.models.province import Province
+
+VENUE_HTML_FILES = {
+    "Ancienne Belgique": "tests/ab_full.html",
+    "Trix": "tests/trix_full.html",
+    "CC Nova Wetteren": "tests/ccnova_full.html"
+}
+
+def create_mock_fetcher(venue_name):
+    def fetch(*args, **kwargs):
+        with open(VENUE_HTML_FILES[venue_name], 'r', encoding='utf-8') as f:
+            html = f.read()
+        
+        from scrapling.engines.toolbelt.custom import Response as ScraplingResponse
+        res = ScraplingResponse(
+            url="http://mock",
+            body=html.encode('utf-8'),
+            content=html.encode('utf-8'),
+            status=200,
+            reason="OK",
+            cookies={},
+            headers={},
+            request_headers={}
+        )
+        mock_resp = MagicMock()
+        mock_resp.text = html
+        mock_resp.css = res.css
+        return mock_resp
+    return fetch
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from app.models.assocations import Base
+
+SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
+engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+@pytest.fixture
+def db():
+    Base.metadata.create_all(bind=engine)
+    db = TestingSessionLocal()
+    yield db
+    db.close()
+    Base.metadata.drop_all(bind=engine)
+
+def test_bulletproof_thesis_e2e(db):
+    """
+    Test 5: Functionele eisen.
+    Verifieert de volledige gegevensstroom van de initiële scrapingsopdracht tot de uiteindelijke verwerking in de notificatie-wachtrij. 
+    Deze test omvat de extractie van HTML-data, database-inserties, statuswijzigingen en de uiteindelijke bundeling in een e-mailnotificatie.
+    """
+    
+    ab_config = VenueScraperConfig(
+        venue_name="Ancienne Belgique",
+        start_url="https://www.abconcerts.be/nl/agenda",
+        selectors=SelectorConfig(
+            card=".concert",
+            title=".title",
+            date="time",
+            url="a.btn",
+            image="img"
+        ),
+        date_parsing=DateParsingConfig(type="iso", attr="datetime"),
+        performer_strategy=PerformerStrategy()
+    )
+
+    trix_config = VenueScraperConfig(
+        venue_name="Trix",
+        start_url="https://www.trixonline.be/nl/programma",
+        selectors=SelectorConfig(
+            card=".card",
+            title=".card__title",
+            date=".card__label.card__label--small",
+            url="a.card",
+            image="img"
+        ),
+        date_parsing=DateParsingConfig(type="format", format="%Y-%m-%d"),
+        performer_strategy=PerformerStrategy(split_by=["+"])
+    )
+
+    ccnova_config = VenueScraperConfig(
+        venue_name="CC Nova Wetteren",
+        start_url="https://www.ccnovawetteren.be",
+        selectors=SelectorConfig(
+            card="article.article--event",
+            title=".partial__title span",
+            date=".date-block",
+            url=".partial__link",
+            image="img.thumb-photo"
+        ),
+        date_parsing=DateParsingConfig(type="format", format="%Y-%m-%d"),
+        performer_strategy=PerformerStrategy()
+    )
+    
+    ab_venue = Venue(name="Ancienne Belgique", city="Brussels", province=Province.ANTWERP, website_url=str(ab_config.start_url))
+    db.add(ab_venue)
+    ccnova_venue = Venue(name="CC Nova Wetteren", city="Wetteren", province=Province.EAST_FLANDERS, website_url=str(ccnova_config.start_url))
+    db.add(ccnova_venue)
+    db.commit()
+
+    user = User(email="e2e@test.com")
+    db.add(user)
+    db.commit()
+
+    sub = Subscription(user_id=user.id, venue_id=ccnova_venue.id)
+    db.add(sub)
+    db.commit()
+
+    # 3. MOCK Fetches & Scrape CC Nova
+    # We patch fetcher so that when VenueScraperConfig runs, we return ccnova html
+    engine = ScraperEngine()
+    
+    # Patch fetcher & date parsing
+    with patch.object(engine.fetcher, 'get', side_effect=create_mock_fetcher("CC Nova Wetteren")):
+        with patch.object(DateParsingConfig, 'parse', return_value=datetime.datetime.now()):
+            items = engine.scrape_venue(ccnova_config)
+    
+    # 4. Assert Scraper extracted real stuff
+    assert len(items) > 0, "No items scraped from real CC Nova HTML"
+    
+    # 5. Insert Concerts into DB
+    for item in items:
+        # Pydantic model vs dict fallback
+        title = item.title if hasattr(item, 'title') else item.get('title')
+        date = item.date if hasattr(item, 'date') else item.get('date', datetime.datetime.now())
+        url = item.url if hasattr(item, 'url') else item.get('url')
+        image_url = item.image_url if hasattr(item, 'image_url') else item.get('image_url')
+        content_hash = item.content_hash if hasattr(item, 'content_hash') else item.get('content_hash', "dummy")
+        
+        c = Concert(
+            venue_id=ccnova_venue.id,
+            title=title,
+            date=date,
+            url=str(url),
+            image_url=str(image_url) if image_url else None,
+            status="Scheduled",
+            content_hash=content_hash
+        )
+        db.add(c)
+    db.commit()
+
+    # Update an existing one to test outdated logic
+    updated_concert = db.query(Concert).first()
+    updated_concert.status = "Cancelled/Updated"
+    db.commit()
+
+    # 6. Process matchers
+    for c in db.query(Concert).all():
+        if c.id == updated_concert.id:
+            queue_notifications_for_concert(db, c.id, "cancelled")
+        else:
+            queue_notifications_for_concert(db, c.id, "new")
+
+    # 7. Batch & send emails
+    
+    # We need a mock session class so we don't close the engine and hit detached instance errors
+    class DummySession(MagicMock):
+        def close(self): pass
+        def __getattr__(self, name):
+            if name == "close":
+                return lambda: None
+            return getattr(db, name)
+            
+    with patch('app.services.matcher.SessionLocal', return_value=DummySession()):
+        with patch('app.services.matcher.send_daily_digest') as mock_mailer:
+            process_daily_digests()
+            
+            # Email must have been sent
+            assert mock_mailer.called, "Daily digest was not sent"
+            
+            # The body should contain info about "Updated/Cancelled" and newly found concerts
+            args = mock_mailer.call_args[0]
+            notifications_sent = args[1]
+    
+            assert len(notifications_sent) > 0
+    
+            has_cancelled = False
+            for notif in notifications_sent:
+                if notif.change_type == "cancelled":
+                    has_cancelled = True
+                try: 
+                    if notif.concert and notif.concert.status == "Cancelled/Updated":
+                        has_cancelled = True
+                except:
+                    pass
+                    
+            assert has_cancelled, "Should have detected the 'Cancelled' / 'outdated' concert!"
+            assert mock_mailer.call_count == 1
 \end{lstlisting}

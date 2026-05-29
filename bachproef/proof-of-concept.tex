@@ -31,7 +31,10 @@ De transformatie van ongestructureerde HTML-data naar gestructureerde datamodell
 
 \subsection{Database Modellen (SQLAlchemy)}
 
-PLACEHOLDER: Tekst
+De database architectuur is ontworpen om de relationele verbanden tussen concerten, locaties (\textit{Venues}) en artiesten (\textit{Performers}) te bewaken.
+Met behulp van SQLAlchemy worden deze entiteiten omgezet in Python-klassen, 
+waarbij de integriteit wordt afgedwongen via \textit{foreign keys} en een \textit{association table} voor de veel-op-veel relatie tussen concerten en artiesten. 
+Dit zorgt ervoor dat data-consistentie behouden blijft wanneer bijvoorbeeld een artiest aan meerdere concerten wordt gekoppeld.
 
 \begin{lstlisting}[language=Python,label={Concert Model},caption={Voorbeeld van een SQLAlchemy datamodel voor een concert.}]
 def utcnow():
@@ -95,9 +98,65 @@ De extractie-logica bestaat hierdoor uit 2 delen:
 
 \subsection{Scraper Engine}
 
-De kern van de extractie vindt plaats in de scraper engine, die gebruik maakt van de Scrapling bibliotheek.
+De kern van de extractie vindt plaats in de \texttt{ScraperEngine}, die gebruikmaakt van de \texttt{Scrapling}-bibliotheek. Om de schaalbaarheid van de applicatie te garanderen, bevat deze engine geen hardgecodeerde regels voor specifieke zalen. In plaats daarvan fungeert het als een generieke motor die wordt aangedreven door een extern configuratie-object (\texttt{VenueScraperConfig}). 
 
-PLACEHOLDER: code snippets of scraper engine
+Daarnaast is de engine ontworpen met ethisch scrapen in het achterhoofd: bij de initialisatie van de \texttt{Fetcher} wordt de naleving van \texttt{robots.txt} strikt afgedwongen. 
+
+Listing \ref{lst:scraper-init} toont de opzet en de primaire iteratielus van de engine, waarbij te zien is hoe de inkomende configuratie de extractie aanstuurt.
+
+\begin{lstlisting}[language=Python, label={lst:scraper-init}, caption={Initialisatie en configuratie-gestuurde extractie in de Scraper Engine.}]
+class ScraperEngine:
+    def __init__(self):
+        # Ethisch scrapen: automatische naleving van robots.txt
+        self.fetcher = Fetcher(auto_match=True, robots_txt_obey=True)
+
+    def scrape_venue(self, config: VenueScraperConfig) -> List[Dict[str, Any]]:
+        url = str(config.start_url)
+        try:
+            response = self.fetcher.get(url)
+            # Dynamische selectie van elementen op basis van de configuratie
+            cards = response.css(config.selectors.card)
+        except Exception as e:
+            logger.error(f"Extractie gefaald voor {config.venue_name}: {e}")
+            return []
+        
+        scraped_data = []
+        for card in cards:
+            # Voorbeeld van dynamische extractie:
+            title_sel = card.css(config.selectors.title)
+            if not title_sel:
+                continue
+            title = " ".join(title_sel[0].get_all_text().split()).strip()
+            
+            # ... (extractie van datum, url, image en prijs via fallbacks)
+\end{lstlisting}
+
+Naast de ruwe data-extractie is de \texttt{ScraperEngine} ook verantwoordelijk voor de voorbereiding op change detection. Omdat websites geen unieke ID's meesturen voor hun evenementen, berekent de engine een cryptografische vingerafdruk (hash) op basis van de inhoudelijke velden. 
+
+Zoals te zien in Listing \ref{lst:scraper-hash}, wordt deze \texttt{content\_hash} samen met de geëxtraheerde data gevalideerd via een Pydantic-model (\texttt{ScrapedItem}) voordat deze de engine verlaat. Dit garandeert dat onvolledige of corrupte iteraties de database nooit bereiken.
+
+\begin{lstlisting}[language=Python, label={lst:scraper-hash}, caption={Generatie van de content hash en strikte datavalidatie.}]
+                # Berekening van een unieke vingerafdruk voor change detection
+                content_str = f"{title}|{dt.isoformat()}|{sorted(performers)}|{price}|{image_url}"
+                content_hash = hashlib.md5(content_str.encode()).hexdigest()
+
+                # Gebruik Pydantic voor finale validatie en opschoning
+                item = ScrapedItem(
+                    title=title,
+                    date=dt,
+                    url=full_url,
+                    image_url=image_url,
+                    price=price,
+                    performers=performers,
+                    venue_name=config.venue_name,
+                    content_hash=content_hash
+                )
+                scraped_data.append(item.model_dump())
+            except Exception as e:
+                logger.error(f"Fout bij het parsen van item in {config.venue_name}: {e}")
+                
+        return scraped_data
+\end{lstlisting}
 
 \subsection{Scraping configuratie}
 
@@ -114,13 +173,96 @@ class VenueScraperConfig(BaseModel):
 
 \subsection{Omzeilen van Barrières}
 
-PLACEHOLDER: Browserforge etc..
+Een essentieel onderdeel van de scraping-engine is het vermogen om de geavanceerde barrières van moderne concertwebsites te omzeilen. Hiervoor maakt de PoC gebruik van de \textit{stealth} mogelijkheden van Scrapling, in combinatie met de \textit{browserforge} library. De implementatie focust op drie niveaus:
+
+\begin{itemize}
+    \item \textbf{Browser Impersonation}: Door gebruik te maken van geavanceerde fetchers worden browserspecifieke headers en JavaScript-eigenschappen automatisch gesynchroniseerd met die van een legitieme browser. Dit voorkomt dat de website het gebruik van een \textit{headless browser} detecteert.
+    \item \textbf{TLS Fingerprinting}: De engine simuleert de cryptografische patronen van echte browsers tijdens de SSL/TLS-handshake. Hierdoor wordt voorkomen dat de infra-laag van de website het verzoek blokkeert op basis van een vingerafdruk die typisch is voor Python-scripts.
+    \item \textbf{Behavioral Simulation}: Het systeem hanteert dynamische extractiepatronen om te voorkomen dat geautomatiseerde frequenties leiden tot een IP-blokkade, terwijl het tegelijkertijd de ethische richtlijnen van de doelwebsite respecteert.
+\end{itemize}
+
+Zoals te zien is in Listing \ref{lst:stealth-init}, worden deze complexe mechanismen in de architectuur geabstraheerd tijdens de initialisatie van de \texttt{ScraperEngine}. Door de parameter \texttt{auto\_match=True} mee te geven, activeert het framework autonoom de browser-impersonatie en TLS-spoofing voor elk uitgaand verzoek.
+
+\begin{lstlisting}[language=Python, label={lst:stealth-init}, caption={Initialisatie van de ScraperEngine met ingebouwde stealth- en compliance-mechanismen.}]
+from scrapling import Fetcher
+
+class ScraperEngine:
+    def __init__(self):
+        # Initialisatie van de Fetcher
+        # auto_match=True activeert Browserforge (header impersonation)
+        # en curl-cffi (TLS fingerprint spoofing) om bot-detectie te omzeilen
+        self.fetcher = Fetcher(
+            auto_match=True, 
+            robots_txt_obey=True # Behoudt de ethische compliance
+        )
+\end{lstlisting}
+
+\subsection{Strategische Selectie van de Extractiemotor}
+\label{sec:extractie-motor}
+
+Het \texttt{Scrapling}-framework biedt een modulair arsenaal aan 
+\textit{fetchers}, elk ontworpen voor specifieke 
+weerstandsniveaus en performantie-eisen. Binnen de architectuur van 
+deze \gls{PoC} is de extractielaag zodanig abstract dat het 
+wisselen tussen deze motoren beperkt tot het aanpassen van een import en klasse naam
+, zonder dat de parsing-logica of de 
+CSS-selectors herschreven moeten worden. Dit draagt fundamenteel bij 
+aan de architecturale schaalbaarheid van het systeem.
+
+Voor de huidige implementatie is een strategische afweging gemaakt 
+tussen de beschikbare motoren op basis van snelheid, resourcegebruik 
+en capaciteiten om anti-bot maatregelen te omzeilen. De volgende fetchers zijn overwogen\autocite{ScraplingFetchers}:
+
+\begin{itemize}
+    \item \textbf{\texttt{Fetcher} (De Huidige Keuze):} 
+    Deze fetcher opereert puur op de netwerklaag. Door gebruik te maken 
+    van \texttt{curl-cffi} en de \texttt{auto\_match=True} parameter, 
+    simuleert deze fetcher de TLS-vingerafdrukken van legitieme 
+    browsers. Het resourcegebruik is extreem laag en de 
+    verwerkingssnelheid is optimaal. Voor locaties die \gls{SSR} gebruiken, is dit de meest efficiënte oplossing.
+    
+    \item \textbf{\texttt{AsyncFetcher} (Voor Toekomstige Schaalbaarheid):} 
+    Dit is de asynchrone variant van de standaard fetcher, ontworpen 
+    om meerdere pagina's parallel op te halen via \texttt{asyncio}. 
+    Omdat de scope van deze \gls{PoC} zich beperkt tot de validatie 
+    op een handvol locaties, is de prestatiewinst in dit geval verwaarloosbaar. 
+    In een productie-omgeving met honderden venues 
+    zou deze fetcher de totale looptijd verlagen.
+    
+    \item \textbf{\texttt{DynamicFetcher} \& \texttt{StealthyFetcher} (Applicatielaag):} 
+    Deze fetchers starten een volwaardige \textit{headless browser} op. 
+    De \texttt{DynamicFetcher} dient om JavaScript-gedreven 
+    \gls{SPA}s te renderen. De \texttt{StealthyFetcher} 
+    voegt daar nog geavanceerde browser-impersonatie en canvas-spoofing aan toe. 
+    Omdat het initiëren van browser-instanties veel geheugen vereist, 
+    worden deze fetchers in deze \gls{PoC} niet gebruikt. Deze fetchers zijn bedoeld voor websites met agressieve JavaScript-gebaseerde botdetectie. 
+    En de gekozen venues maken hier geen gebruik van, waardoor het extra gebruik niet gerechtvaardigd is.
+\end{itemize}
+
+Tabel \ref{tab:fetcher-vergelijking} biedt een overzichtelijk 
+vergelijkingskader van deze afweging.
+
+\begin{table}[h]
+\centering
+\caption{Vergelijkende analyse van Scrapling extractiemotoren}
+\label{tab:fetcher-vergelijking}
+\begin{tabular}{p{3cm} p{2.5cm} p{4cm} p{2.5cm}}
+\hline
+\textbf{Fetcher} & \textbf{Laag} & \textbf{Defensieve Kracht} & \textbf{Resourcekost} \\
+\hline
+\texttt{Fetcher} & Netwerk & Omzeilt TLS/JA3 vingerafdrukken & Zeer laag \\
+\texttt{AsyncFetcher} & Netwerk & Parallelle verwerking & Laag \\
+\texttt{DynamicFetcher} & Applicatie & Voert JavaScript uit & Hoog \\
+\texttt{StealthyFetcher} & Applicatie & Omzeilt JS-fingerprinting & Zeer hoog \\
+\hline
+\end{tabular}
+\end{table}
 
 \section{\textit{Change Detection} logica}
 
 De kern van de \textit{change detection} logica bevindt zich in een asynchrone Celery-taak die de gescrapete data vergelijkt met de huidige staat in de database . 
 Door gebruik te maken van een \textit{content hash} kan het systeem efficiënt bepalen of de informatie van een concert gewijzigd is, zonder dat elke kolom manueel vergeleken moet worden. 
-Voor een gedetailleerd overzicht van de implementatie van deze logica wordt verwezen naar de \nameref{ch:bijlage} (zie Listing~\ref{Change Detection} op bladzijde~\pageref{Change Detection}).
+Voor een gedetailleerd overzicht van de implementatie van deze logica wordt verwezen naar de \nameref{ch:bijlage} (zie Listing~\ref{lst:change-detection}).
 
 \section{Notificatiesysteem}
 
@@ -136,13 +278,13 @@ Het systeem is modulair opgezet, het bestaat uit 4 delen die samen een volwaardi
 
 \begin{itemize}
     \item \textbf{Trigger}: In de Celery-taak die de \textit{change detection} uitvoert, wordt de notificatie-queue aangeroepen.
-                            Dit gebeurt in \texttt{process\_scraped\_items} (Listing~\ref{Change Detection}) in de regels waar \texttt{queue\_notifications\_for\_concert} wordt aangeroepen, wat zowel bij updates als bij nieuwe concerten is.
+                            Dit gebeurt in \texttt{process\_scraped\_items} (Listing~\ref{lst:change-detection}) in de regels waar \texttt{queue\_notifications\_for\_concert} wordt aangeroepen, wat zowel bij updates als bij nieuwe concerten is.
     \item \textbf{Matcher}: De matcher is verantwoordelijk voor het toevoegen van notificaties aan de queue op basis van de gebruikersvoorkeuren. 
-                            Deze functie \texttt{queue\_notifications\_for\_concert} (Listing~\ref{Notification Queueing}) controleert of er een gebruikersvoorkeur matcht met de venue of artiest van het concert.
+                            Deze functie \texttt{queue\_notifications\_for\_concert} (Listing~\ref{lst:notification-queueing}) controleert of er een gebruikersvoorkeur matcht met de venue of artiest van het concert.
                             Indien dit zo is, wordt er gekeken of er al een notificatie hiervoor bestaat, als dat niet het geval is wordt er een nieuwe notificatie toegevoegd aan de queue. 
-    \item \textbf{Queue}: De notificatiequeue is in deze \gls{PoC} geïmplementeerd als een database-tabel waarin de notificaties worden opgeslagen met een status aangezien deze gebundeld worden. Het gebruikte model voor deze queue staat in Listing~\ref{Notification Queue Model}.
+    \item \textbf{Queue}: De notificatiequeue is in deze \gls{PoC} geïmplemented als een database-tabel waarin de notificaties worden opgeslagen met een status aangezien deze gebundeld worden. Het gebruikte model voor deze queue staat in Listing~\ref{lst:notification-model}.
                           De Celery-worker die verantwoordelijk is voor het versturen van notificaties, haalt de items uit deze queue en verwerkt ze.
-    \item \textbf{Mailer}: De mailer is verantwoordelijk voor het dagelijks versturen van de notificaties. Dit is geïmplementeerd als een Celery-task (Listing~\ref{Daily Digest Processor}) die elke 24 uur gepland wordt om alle nodige notificaties te versturen via de helper functie \texttt{send\_daily\_digest\_email} (Listing~\ref{Daily Digest Mailer}).
+    \item \textbf{Mailer}: De mailer is verantwoordelijk voor het dagelijks versturen van de notificaties. Dit is geïmplementeerd als een Celery-task (Listing~\ref{lst:daily-digest-processor}) die elke 24 uur gepland wordt om alle nodige notificaties te versturen via de helper functie \texttt{send\_daily\_digest\_email} (Listing~\ref{lst:daily-digest-mailer}).
                             De Celery-task zorgt ervoor dat de notificaties worden gebundeld per gebruiker en dat de status van de notificaties in de queue correct wordt bijgewerkt na verzending. De helper functie is verantwoordelijk voor het opstellen en versturen van de e-mail, deze zorgt zowel voor een plain text als een HTML-versie van de e-mail zodat deze altijd kan worden weergegeven ondanks het gebruik van andere e-mailclients.
 \end{itemize}
 
